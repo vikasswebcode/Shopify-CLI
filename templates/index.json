@@ -223,33 +223,8 @@
     "custom_how_it_works_WHMnX8": {
       "type": "custom-how-it-works",
       "blocks": {
-        "item_zgzWCx": {
-          "type": "item",
-          "settings": {
-            "title": "sdsds",
-            "text": "sdsdsds"
-          }
-        },
-        "item_pPzTUr": {
-          "type": "item",
-          "settings": {
-            "title": "sdsds",
-            "text": "sdsdsds"
-          }
-        },
-        "item_iqbWnN": {
-          "type": "item",
-          "settings": {
-            "title": "sdsds",
-            "text": "sdsdsds"
-          }
-        }
+              
       },
-      "block_order": [
-        "item_zgzWCx",
-        "item_pPzTUr",
-        "item_iqbWnN"
-      ],
       "name": "How It Works",
       "settings": {
         "section_bg": "#f8f8f8",
