@@ -1,0 +1,285 @@
+{%- style -%}
+  .cpa-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  @media screen and (max-width: 749px) {
+    .cpa-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | times: 0.65 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.65 | round: 0 }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign headings     = product.metafields.custom.accordion_heading.value
+  assign descriptions = product.metafields.custom.accordion_description.value
+  assign has_data     = false
+  if headings != blank and headings.size > 0
+    assign has_data = true
+  endif
+-%}
+
+<div class="cpa-section-{{ section.id }} cpa-section">
+  <div class="page-width">
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="cpa-main-title" style="text-align: {{ section.settings.heading_align }};">
+        {{ section.settings.heading | escape }}
+      </h2>
+    {%- endif -%}
+
+    {%- if has_data -%}
+      <div class="cpa-accordion-list" id="cpa-list-{{ section.id }}">
+        {%- for heading_item in headings -%}
+          {%- assign desc_item = descriptions[forloop.index0] -%}
+          <div class="cpa-accordion">
+            <button
+              class="cpa-accordion__summary"
+              aria-expanded="{% if section.settings.open_first and forloop.first %}true{% else %}false{% endif %}"
+              aria-controls="cpa-body-{{ section.id }}-{{ forloop.index }}"
+              type="button"
+            >
+              <span class="cpa-accordion__title">{{ heading_item | escape }}</span>
+              <span class="cpa-accordion__icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </span>
+            </button>
+            <div
+              class="cpa-accordion__body"
+              id="cpa-body-{{ section.id }}-{{ forloop.index }}"
+              {% unless section.settings.open_first and forloop.first %}hidden{% endunless %}
+            >
+              <div class="cpa-accordion__content">
+                {%- if desc_item != blank -%}
+                  <p class="cpa-accordion__text">{{ desc_item | escape }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+    {%- else -%}
+      {%- if request.design_mode -%}
+        <p class="cpa-empty-state">
+          No data found. Add product metafields:<br>
+          <code>custom.accordion_heading</code> (List · Single line text)<br>
+          <code>custom.accordion_description</code> (List · Single line text)
+        </p>
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>
+</div>
+
+<style>
+  .cpa-section {
+    box-sizing: border-box;
+  }
+
+  .cpa-main-title {
+    margin: 0 0 32px;
+    font-weight: 600;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .cpa-accordion-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .cpa-accordion {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .cpa-accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding: 20px 4px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  .cpa-accordion__summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .cpa-accordion__title {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .cpa-accordion__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    color: currentColor;
+    transition: transform 0.3s ease;
+  }
+
+  .cpa-accordion__summary[aria-expanded="true"] .cpa-accordion__icon {
+    transform: rotate(180deg);
+  }
+
+  /* Smooth slide open/close using grid trick */
+  .cpa-accordion__body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+    overflow: hidden;
+  }
+
+  .cpa-accordion__body[hidden] {
+    display: grid !important;
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .cpa-accordion__content {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .cpa-accordion__text {
+    margin: 0;
+    padding: 0 4px 20px;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .cpa-empty-state {
+    color: #888;
+    font-size: 0.9rem;
+    border: 1px dashed #ccc;
+    padding: 16px;
+    border-radius: 8px;
+    line-height: 1.8;
+  }
+
+  .cpa-empty-state code {
+    background: #f1f1f1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+</style>
+
+<script>
+  (function () {
+    var list = document.getElementById('cpa-list-{{ section.id }}');
+    if (!list) return;
+
+    var buttons = Array.from(list.querySelectorAll('.cpa-accordion__summary'));
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var isOpen = this.getAttribute('aria-expanded') === 'true';
+        var bodyId = this.getAttribute('aria-controls');
+        var body   = document.getElementById(bodyId);
+
+        /* Close all accordions in this list */
+        buttons.forEach(function (b) {
+          var bBody = document.getElementById(b.getAttribute('aria-controls'));
+          b.setAttribute('aria-expanded', 'false');
+          bBody.setAttribute('hidden', '');
+        });
+
+        /* If it was closed before click, open it now */
+        if (!isOpen) {
+          this.setAttribute('aria-expanded', 'true');
+          body.removeAttribute('hidden');
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product Accordion",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Which mycotoxins are tested for?"
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left",   "label": "Left"   },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right"  }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open first accordion by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Accordion"
+    }
+  ]
+}
+{% endschema %}

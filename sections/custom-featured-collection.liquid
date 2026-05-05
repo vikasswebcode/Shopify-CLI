@@ -1,0 +1,1070 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign products_to_show = section.settings.products_to_show
+  assign columns_desktop  = section.settings.columns_desktop
+  assign columns_mobile   = section.settings.columns_mobile | plus: 0
+-%}
+
+<!-- Pre-rendered product JSON for JS (prices formatted by Liquid) -->
+{%- if section.settings.collection != blank -%}
+  {%- for product in section.settings.collection.products limit: products_to_show -%}
+    <script type="application/json" id="cfc-data-{{ product.id }}-{{ section.id }}">
+      {
+        "id": {{ product.id }},
+        "title": {{ product.title | json }},
+        "url": {{ product.url | json }},
+        "vendor": {{ product.vendor | json }},
+        "images": [
+          {%- for img in product.images -%}
+            {{ img | image_url: width: 720 | json }}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ],
+        "options": [
+          {%- for opt in product.options_with_values -%}
+            {
+              "name": {{ opt.name | json }},
+              "values": [{% for val in opt.values %}{{ val | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ],
+        "variants": [
+          {%- for variant in product.variants -%}
+            {
+              "id": {{ variant.id }},
+              "title": {{ variant.title | json }},
+              "price": {{ variant.price | money | json }},
+              "compare_at_price": {% if variant.compare_at_price and variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+              "available": {{ variant.available }},
+              "option1": {{ variant.option1 | json }},
+              "option2": {{ variant.option2 | json }},
+              "option3": {{ variant.option3 | json }},
+              "options": [{% for o in variant.options %}{{ o | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+              "featured_image": {% if variant.featured_media %}{{ variant.featured_media | image_url: width: 720 | json }}{% else %}null{% endif %}
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+  {%- endfor -%}
+{%- endif -%}
+
+<div class="cfc-section color-{{ section.settings.color_scheme }} isolate gradient section-{{ section.id }}-padding">
+  <div class="page-width">
+
+    {%- if section.settings.title != blank -%}
+      <div class="cfc-header">
+        <h2 class="cfc-title {{ section.settings.heading_size }}">{{ section.settings.title }}</h2>
+        {%- if section.settings.show_view_all and section.settings.collection != blank -%}
+          <a href="{{ section.settings.collection.url }}" class="cfc-view-all-link button button--secondary">
+            View All
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div
+      class="cfc-grid"
+      style="--cfc-cols-mobile: {{ columns_mobile }}; --cfc-cols-desktop: {{ columns_desktop }};"
+    >
+      {%- if section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+        {%- for product in section.settings.collection.products limit: products_to_show -%}
+          {%- liquid
+            assign cv = product.selected_or_first_available_variant
+            assign color_idx = nil
+            for opt in product.options
+              assign opt_lc = opt | downcase
+              if opt_lc == 'color' or opt_lc == 'colour' or opt_lc == 'shade' or opt_lc == 'finish'
+                assign color_idx = forloop.index0
+                break
+              endif
+            endfor
+          -%}
+
+          <div
+            class="cfc-card"
+            data-product-id="{{ product.id }}"
+            data-section-id="{{ section.id }}"
+          >
+            <!-- ── Image ── -->
+            <div class="cfc-card__media">
+              <a href="{{ product.url }}" class="cfc-card__media-link" tabindex="-1" aria-hidden="true">
+                {%- if product.featured_media -%}
+                  <img
+                    class="cfc-card__img"
+                    id="cfc-img-{{ product.id }}-{{ section.id }}"
+                    src="{{ product.featured_media | image_url: width: 533 }}"
+                    srcset="
+                      {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+                      {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+                      {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w{%- endif -%}
+                    "
+                    sizes="(min-width: 990px) calc(100vw / {{ columns_desktop }}), (min-width: 750px) 50vw, 50vw"
+                    alt="{{ product.featured_media.alt | escape }}"
+                    width="{{ product.featured_media.width }}"
+                    height="{{ product.featured_media.height }}"
+                    loading="lazy"
+                  >
+                {%- else -%}
+                  {{ 'product-apparel-2' | placeholder_svg_tag: 'cfc-card__img cfc-card__img--placeholder' }}
+                {%- endif -%}
+              </a>
+
+              <!-- Quick View overlay -->
+              <button
+                class="cfc-quick-view-btn"
+                type="button"
+                data-product-id="{{ product.id }}"
+                data-section-id="{{ section.id }}"
+                aria-label="Quick view {{ product.title | escape }}"
+              >
+                <svg class="cfc-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M10 4C5.5 4 1.7 7.1 1 10c.7 2.9 4.5 6 9 6s8.3-3.1 9-6c-.7-2.9-4.5-6-9-6z" stroke="currentColor" stroke-width="1.5"/>
+                  <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Quick View
+              </button>
+            </div>
+
+            <!-- ── Info ── -->
+            <div class="cfc-card__info">
+              {%- if section.settings.show_vendor and product.vendor != blank -%}
+                <p class="cfc-vendor">{{ product.vendor }}</p>
+              {%- endif -%}
+
+              <h3 class="cfc-card__title">
+                <a href="{{ product.url }}">{{ product.title | escape }}</a>
+              </h3>
+
+              <!-- Price -->
+              <div class="cfc-card__price" id="cfc-price-{{ product.id }}-{{ section.id }}">
+                {%- if cv.compare_at_price > cv.price -%}
+                  <span class="cfc-price cfc-price--sale">{{ cv.price | money }}</span>
+                  <span class="cfc-price cfc-price--compare">{{ cv.compare_at_price | money }}</span>
+                  <span class="cfc-badge cfc-badge--sale">Sale</span>
+                {%- else -%}
+                  <span class="cfc-price">{{ cv.price | money }}</span>
+                {%- endif -%}
+                {%- unless cv.available -%}
+                  <span class="cfc-badge cfc-badge--sold-out">Sold Out</span>
+                {%- endunless -%}
+              </div>
+
+              <!-- Color Swatches -->
+              {%- if color_idx != nil -%}
+                {%- assign color_opt = product.options_with_values[color_idx] -%}
+                {%- if color_opt.values.size > 1 -%}
+                  <div class="cfc-swatches" role="group" aria-label="Color options">
+                    {%- for val in color_opt.values -%}
+                      {%- liquid
+                        assign sw_var = nil
+                        assign opt_num = color_idx | plus: 1
+                        assign opt_key = 'option' | append: opt_num
+                        for v in product.variants
+                          if v[opt_key] == val and v.available
+                            assign sw_var = v
+                            break
+                          endif
+                        endfor
+                        if sw_var == nil
+                          for v in product.variants
+                            if v[opt_key] == val
+                              assign sw_var = v
+                              break
+                            endif
+                          endfor
+                        endif
+                      -%}
+                      <button
+                        class="cfc-swatch{% unless sw_var.available %} cfc-swatch--unavailable{% endunless %}"
+                        type="button"
+                        style="background-color: {{ val | downcase | replace: ' ', '' }};"
+                        data-variant-id="{{ sw_var.id }}"
+                        data-value="{{ val | escape }}"
+                        data-price="{{ sw_var.price | money | escape }}"
+                        data-compare-price="{% if sw_var.compare_at_price > sw_var.price %}{{ sw_var.compare_at_price | money | escape }}{% endif %}"
+                        data-available="{{ sw_var.available }}"
+                        data-image="{{ sw_var.featured_media | image_url: width: 720 }}"
+                        title="{{ val | escape }}"
+                        aria-label="{{ val | escape }}"
+                      ></button>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+
+              <!-- Actions -->
+              <div class="cfc-card__actions">
+                {%- if cv.available -%}
+                  {%- if product.variants.size == 1 -%}
+                    <button
+                      class="cfc-atc-btn button"
+                      type="button"
+                      data-variant-id="{{ cv.id }}"
+                      data-section-id="{{ section.id }}"
+                      aria-label="Add {{ product.title | escape }} to cart"
+                    >
+                      <span class="cfc-atc-btn__text">Add to Cart</span>
+                      <span class="cfc-atc-btn__spinner" aria-hidden="true">
+                        <svg class="cfc-spinner" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-dasharray="45" stroke-dashoffset="35"/>
+                        </svg>
+                      </span>
+                    </button>
+                  {%- else -%}
+                    <button
+                      class="cfc-choose-btn button"
+                      type="button"
+                      data-product-id="{{ product.id }}"
+                      data-section-id="{{ section.id }}"
+                      aria-label="Choose options for {{ product.title | escape }}"
+                    >
+                      Choose Options
+                    </button>
+                  {%- endif -%}
+                {%- else -%}
+                  <button class="button" disabled aria-disabled="true">Sold Out</button>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+
+        {%- endfor -%}
+      {%- else -%}
+        <!-- Placeholder cards (editor / no collection selected) -->
+        {%- for i in (1..columns_desktop) -%}
+          <div class="cfc-card cfc-card--placeholder">
+            <div class="cfc-card__media">
+              {{ 'product-apparel-2' | placeholder_svg_tag: 'cfc-card__img cfc-card__img--placeholder' }}
+            </div>
+            <div class="cfc-card__info">
+              <h3 class="cfc-card__title"><a href="#">Product Title</a></h3>
+              <div class="cfc-card__price"><span class="cfc-price">$0.00</span></div>
+              <div class="cfc-card__actions">
+                <button class="button" disabled>Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_view_all
+      and section.settings.collection != blank
+      and section.settings.collection.all_products_count > products_to_show
+    -%}
+      <div class="cfc-view-all-wrap">
+        <a href="{{ section.settings.collection.url }}" class="button button--secondary">
+          View All {{ section.settings.collection.title }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     QUICK VIEW MODAL
+     ════════════════════════════════ -->
+<div
+  id="CFC-Modal-{{ section.id }}"
+  class="cfc-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Quick view"
+  aria-hidden="true"
+>
+  <div class="cfc-modal__overlay" data-cfc-close></div>
+  <div class="cfc-modal__panel">
+    <button class="cfc-modal__close" type="button" data-cfc-close aria-label="Close quick view">
+      <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14">
+        <path d="M13 1 1 13M1 1l12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="cfc-modal__body" id="CFC-Modal-Body-{{ section.id }}">
+      <!-- Filled dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     STYLES
+     ════════════════════════════════ -->
+<style>
+/* ── Grid ── */
+.cfc-grid {
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: repeat(var(--cfc-cols-mobile, 2), 1fr);
+}
+@media (min-width: 750px) {
+  .cfc-grid { gap: 2rem; grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 990px) {
+  .cfc-grid { grid-template-columns: repeat(var(--cfc-cols-desktop, 4), 1fr); }
+}
+
+/* ── Header ── */
+.cfc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.4rem;
+}
+.cfc-title { margin: 0; }
+.cfc-view-all-link { white-space: nowrap; }
+
+/* ── Card ── */
+.cfc-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--media-radius, 0.4rem);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+.cfc-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+
+/* ── Card Image ── */
+.cfc-card__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: rgba(0,0,0,0.04);
+}
+.cfc-card__media-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cfc-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.cfc-card__img--placeholder {
+  padding: 2rem;
+  opacity: 0.4;
+}
+.cfc-card:hover .cfc-card__img { transform: scale(1.05); }
+
+/* ── Quick View Overlay Button ── */
+.cfc-quick-view-btn {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  opacity: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.93);
+  color: #111;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  padding: 0.7rem 1.4rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 2;
+  pointer-events: none;
+}
+.cfc-card:hover .cfc-quick-view-btn {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.cfc-icon { width: 1.4rem; height: 1.4rem; flex-shrink: 0; }
+
+/* ── Card Info ── */
+.cfc-card__info {
+  padding: 1.2rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  flex: 1;
+}
+.cfc-vendor {
+  margin: 0;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+.cfc-card__title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0;
+}
+.cfc-card__title a { color: inherit; text-decoration: none; }
+.cfc-card__title a:hover { text-decoration: underline; }
+
+/* ── Price ── */
+.cfc-card__price {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.cfc-price { font-size: 1.4rem; font-weight: 600; }
+.cfc-price--sale { color: #c0392b; }
+.cfc-price--compare {
+  font-size: 1.2rem;
+  font-weight: 400;
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+.cfc-badge {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  line-height: 1.4;
+}
+.cfc-badge--sale { background: #c0392b; color: #fff; }
+.cfc-badge--sold-out { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.5); }
+
+/* ── Swatches ── */
+.cfc-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.cfc-swatch {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  outline: 1px solid rgba(0,0,0,0.18);
+  outline-offset: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: outline-color 0.15s, transform 0.15s;
+}
+.cfc-swatch:hover { outline-color: rgba(0,0,0,0.6); transform: scale(1.15); }
+.cfc-swatch.is-active {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.cfc-swatch--unavailable {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.cfc-swatch--unavailable::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, transparent 42%, rgba(255,255,255,0.7) 42%, rgba(255,255,255,0.7) 58%, transparent 58%);
+}
+
+/* ── ATC Buttons ── */
+.cfc-card__actions { margin-top: auto; padding-top: 0.4rem; }
+.cfc-atc-btn,
+.cfc-choose-btn {
+  width: 100%;
+  justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cfc-atc-btn__spinner { display: none; }
+.cfc-atc-btn.is-loading .cfc-atc-btn__text { display: none; }
+.cfc-atc-btn.is-loading .cfc-atc-btn__spinner { display: inline-flex; }
+.cfc-spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+  animation: cfc-spin 0.75s linear infinite;
+}
+@keyframes cfc-spin { to { transform: rotate(360deg); } }
+
+/* ── View All ── */
+.cfc-view-all-wrap { text-align: center; margin-top: 3.2rem; }
+
+/* ════════════════════════════════
+   QUICK VIEW MODAL
+   ════════════════════════════════ */
+.cfc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.6rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.cfc-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+.cfc-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.cfc-modal__panel {
+  position: relative;
+  z-index: 1;
+  background: rgba(var(--color-background, 255, 255, 255), 1);
+  border-radius: 0.8rem;
+  max-width: 920px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.22);
+  padding: 2.8rem 2.4rem 2.4rem;
+  transform: translateY(12px);
+  transition: transform 0.25s ease;
+}
+.cfc-modal.is-open .cfc-modal__panel { transform: translateY(0); }
+.cfc-modal__close {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.7rem;
+  line-height: 0;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.cfc-modal__close:hover { background: rgba(0,0,0,0.07); }
+.cfc-modal__body { min-height: 24rem; }
+
+/* ── Quick View Product Layout ── */
+.cfc-qv {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.4rem;
+}
+@media (min-width: 750px) { .cfc-qv { grid-template-columns: 1fr 1fr; } }
+
+.cfc-qv__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 0.4rem;
+  display: block;
+}
+.cfc-qv__info { display: flex; flex-direction: column; gap: 1.2rem; }
+.cfc-qv__vendor { margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.55; }
+.cfc-qv__title { margin: 0; font-size: 2rem; font-weight: 700; line-height: 1.25; }
+.cfc-qv__title a { color: inherit; text-decoration: none; }
+.cfc-qv__title a:hover { text-decoration: underline; }
+.cfc-qv__price {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.cfc-qv__option-group { margin-bottom: 0.4rem; }
+.cfc-qv__option-label {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+.cfc-qv__option-label span { font-weight: 400; opacity: 0.7; }
+.cfc-qv__option-btns { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.cfc-qv__opt-btn {
+  padding: 0.5rem 1.2rem;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.cfc-qv__opt-btn:hover { border-color: currentColor; }
+.cfc-qv__opt-btn.is-active { background: #111; color: #fff; border-color: #111; }
+.cfc-qv__opt-btn--unavailable { opacity: 0.35; }
+
+/* Swatch button in quick view */
+.cfc-qv__opt-btn--swatch {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  padding: 0;
+  outline: 1px solid rgba(0,0,0,0.15);
+  border: 2px solid transparent;
+}
+.cfc-qv__opt-btn--swatch.is-active {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+.cfc-qv__atc-btn {
+  margin-top: 0.4rem;
+  width: 100%;
+  justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cfc-qv__atc-btn.is-loading .cfc-atc-btn__text { display: none; }
+.cfc-qv__atc-btn.is-loading .cfc-atc-btn__spinner { display: inline-flex; }
+.cfc-qv__view-full { font-size: 1.2rem; opacity: 0.65; text-decoration: underline; }
+
+/* Loading state */
+.cfc-modal__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24rem;
+}
+.cfc-modal__loading .cfc-spinner { width: 3.2rem; height: 3.2rem; }
+</style>
+
+<!-- ════════════════════════════════
+     JAVASCRIPT
+     ════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  var SECTION_ID = '{{ section.id }}';
+  var modal      = document.getElementById('CFC-Modal-' + SECTION_ID);
+  var modalBody  = document.getElementById('CFC-Modal-Body-' + SECTION_ID);
+  var modalOpener = null;
+
+  /* ──────────────────────────────
+     UTILITY: read pre-rendered JSON
+     ────────────────────────────── */
+  function getProductData(productId) {
+    var el = document.getElementById('cfc-data-' + productId + '-' + SECTION_ID);
+    if (!el) return null;
+    try { return JSON.parse(el.textContent); } catch (e) { return null; }
+  }
+
+  /* ──────────────────────────────
+     SWATCH CLICKS (on card)
+     ────────────────────────────── */
+  document.querySelectorAll('.cfc-card[data-section-id="' + SECTION_ID + '"]').forEach(function (card) {
+    var swatches = card.querySelectorAll('.cfc-swatch');
+    if (!swatches.length) return;
+
+    swatches.forEach(function (sw) {
+      sw.addEventListener('click', function () {
+        swatches.forEach(function (s) { s.classList.remove('is-active'); });
+        sw.classList.add('is-active');
+
+        var productId  = card.dataset.productId;
+        var variantId  = sw.dataset.variantId;
+        var available  = sw.dataset.available === 'true';
+        var imgSrc     = sw.dataset.image;
+        var price      = sw.dataset.price;
+        var cmpPrice   = sw.dataset.comparePrice;
+
+        /* Update card image */
+        if (imgSrc) {
+          var img = document.getElementById('cfc-img-' + productId + '-' + SECTION_ID);
+          if (img) img.src = imgSrc;
+        }
+
+        /* Update price display */
+        var priceEl = document.getElementById('cfc-price-' + productId + '-' + SECTION_ID);
+        if (priceEl && price) {
+          var html = '';
+          if (cmpPrice) {
+            html += '<span class="cfc-price cfc-price--sale">' + price + '</span>';
+            html += '<span class="cfc-price cfc-price--compare">' + cmpPrice + '</span>';
+            html += '<span class="cfc-badge cfc-badge--sale">Sale</span>';
+          } else {
+            html += '<span class="cfc-price">' + price + '</span>';
+          }
+          if (!available) html += '<span class="cfc-badge cfc-badge--sold-out">Sold Out</span>';
+          priceEl.innerHTML = html;
+        }
+
+        /* Update ATC button */
+        var atcBtn = card.querySelector('.cfc-atc-btn');
+        if (atcBtn && variantId) {
+          atcBtn.dataset.variantId = variantId;
+          atcBtn.disabled = !available;
+        }
+      });
+    });
+  });
+
+  /* ──────────────────────────────
+     ADD TO CART (AJAX)
+     ────────────────────────────── */
+  function addToCart(variantId, buttonEl, onSuccess) {
+    buttonEl.classList.add('is-loading');
+    buttonEl.disabled = true;
+
+    fetch(window.routes ? window.routes.cart_add_url : '/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        id: parseInt(variantId, 10),
+        quantity: 1,
+        sections: ['cart-drawer', 'cart-icon-bubble'],
+        sections_url: window.location.pathname
+      })
+    })
+    .then(function (res) {
+      if (!res.ok) return res.json().then(function (e) { throw e; });
+      return res.json();
+    })
+    .then(function (state) {
+      /* Let the theme's CartDrawer update itself + open */
+      var cartDrawer = document.querySelector('cart-drawer');
+      if (cartDrawer && typeof cartDrawer.renderContents === 'function') {
+        cartDrawer.renderContents(state);
+      } else if (cartDrawer) {
+        /* Fallback: force open */
+        setTimeout(function () {
+          cartDrawer.classList.add('animate', 'active');
+          document.body.classList.add('overflow-hidden');
+        });
+      }
+      if (typeof onSuccess === 'function') onSuccess();
+    })
+    .catch(function (err) {
+      var msg = (err && err.description) || 'Could not add to cart. Please try again.';
+      alert(msg);
+    })
+    .finally(function () {
+      buttonEl.classList.remove('is-loading');
+      buttonEl.disabled = false;
+    });
+  }
+
+  /* Wire single-variant ATC buttons */
+  document.querySelectorAll('.cfc-atc-btn[data-section-id="' + SECTION_ID + '"]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      addToCart(btn.dataset.variantId, btn);
+    });
+  });
+
+  /* ──────────────────────────────
+     QUICK VIEW MODAL
+     ────────────────────────────── */
+  if (!modal) return;
+
+  function openModal() {
+    modal.classList.add('is-open');
+    modal.removeAttribute('aria-hidden');
+    document.body.classList.add('overflow-hidden');
+    setTimeout(function () {
+      var close = modal.querySelector('.cfc-modal__close');
+      if (close) close.focus();
+    }, 100);
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    /* Only remove overflow-hidden if cart drawer is not also open */
+    var cartDrawer = document.querySelector('cart-drawer');
+    if (!cartDrawer || !cartDrawer.classList.contains('active')) {
+      document.body.classList.remove('overflow-hidden');
+    }
+    if (modalBody) modalBody.innerHTML = '';
+    if (modalOpener) { modalOpener.focus(); modalOpener = null; }
+  }
+
+  modal.addEventListener('click', function (e) {
+    if (e.target.closest('[data-cfc-close]')) closeModal();
+  });
+  document.addEventListener('keyup', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+
+  /* Build quick view HTML from pre-rendered JSON */
+  function buildQuickView(productId) {
+    var product = getProductData(productId);
+    if (!product) {
+      modalBody.innerHTML = '<p style="text-align:center;padding:3rem 2rem;">Could not load product data.</p>';
+      return;
+    }
+
+    var cv = product.variants.find(function (v) { return v.available; }) || product.variants[0];
+    var selectedOpts = cv.options.slice();
+
+    var COLOR_NAMES = ['color', 'colour', 'shade', 'finish'];
+
+    function isColorOption(name) {
+      return COLOR_NAMES.indexOf(name.toLowerCase()) !== -1;
+    }
+
+    function priceHTML(variant) {
+      var h = '';
+      if (variant.compare_at_price) {
+        h += '<span class="cfc-price cfc-price--sale">' + variant.price + '</span>';
+        h += '<span class="cfc-price cfc-price--compare">' + variant.compare_at_price + '</span>';
+        h += '<span class="cfc-badge cfc-badge--sale">Sale</span>';
+      } else {
+        h += '<span class="cfc-price">' + variant.price + '</span>';
+      }
+      return h;
+    }
+
+    function optionsHTML() {
+      return product.options.map(function (opt, idx) {
+        var isSwatch = isColorOption(opt.name);
+        var btns = opt.values.map(function (val) {
+          var isActive   = val === cv.options[idx];
+          var isAvailable = product.variants.some(function (v) { return v.options[idx] === val && v.available; });
+          var cls = 'cfc-qv__opt-btn';
+          if (isSwatch) cls += ' cfc-qv__opt-btn--swatch';
+          if (isActive) cls += ' is-active';
+          if (!isAvailable) cls += ' cfc-qv__opt-btn--unavailable';
+          var style = isSwatch ? ' style="background-color:' + val.toLowerCase().replace(/\s+/g, '') + ';"' : '';
+          return '<button type="button" class="' + cls + '" data-opt-idx="' + idx + '" data-val="' + val + '" title="' + val + '"' + style + (isSwatch ? '' : '>' + val) + (isSwatch ? '></button>' : '</button>');
+        }).join('');
+
+        return '<div class="cfc-qv__option-group" data-opt-idx="' + idx + '">'
+          + '<span class="cfc-qv__option-label">' + opt.name + ': <span id="cfc-qv-opt-val-' + idx + '">' + cv.options[idx] + '</span></span>'
+          + '<div class="cfc-qv__option-btns">' + btns + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    var imgSrc = cv.featured_image || (product.images.length ? product.images[0] : '');
+    var html = '<div class="cfc-qv">'
+      + '<div><img class="cfc-qv__image" id="cfc-qv-img-' + productId + '" src="' + (imgSrc || '') + '" alt="' + product.title + '" loading="eager"></div>'
+      + '<div class="cfc-qv__info">'
+        + (product.vendor ? '<p class="cfc-qv__vendor">' + product.vendor + '</p>' : '')
+        + '<h2 class="cfc-qv__title"><a href="' + product.url + '">' + product.title + '</a></h2>'
+        + '<div class="cfc-qv__price" id="cfc-qv-price-' + productId + '">' + priceHTML(cv) + '</div>'
+        + optionsHTML()
+        + '<button class="cfc-qv__atc-btn button" type="button" id="cfc-qv-atc-' + productId + '" data-variant-id="' + cv.id + '"'
+            + (cv.available ? '' : ' disabled') + '>'
+          + '<span class="cfc-atc-btn__text">' + (cv.available ? 'Add to Cart' : 'Sold Out') + '</span>'
+          + '<span class="cfc-atc-btn__spinner" aria-hidden="true">'
+            + '<svg class="cfc-spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-dasharray="45" stroke-dashoffset="35"/></svg>'
+          + '</span>'
+        + '</button>'
+        + '<a href="' + product.url + '" class="cfc-qv__view-full">View full details &rarr;</a>'
+      + '</div>'
+    + '</div>';
+
+    modalBody.innerHTML = html;
+
+    /* ── Wire option buttons ── */
+    function findVariant(opts) {
+      return product.variants.find(function (v) {
+        return v.options.every(function (o, i) { return o === opts[i]; });
+      }) || null;
+    }
+
+    function updateQV(variant) {
+      if (!variant) return;
+      /* Price */
+      var pe = document.getElementById('cfc-qv-price-' + productId);
+      if (pe) pe.innerHTML = priceHTML(variant);
+      /* Image */
+      if (variant.featured_image) {
+        var im = document.getElementById('cfc-qv-img-' + productId);
+        if (im) im.src = variant.featured_image;
+      }
+      /* ATC button */
+      var atc = document.getElementById('cfc-qv-atc-' + productId);
+      if (atc) {
+        atc.dataset.variantId = variant.id;
+        atc.disabled = !variant.available;
+        atc.querySelector('.cfc-atc-btn__text').textContent = variant.available ? 'Add to Cart' : 'Sold Out';
+      }
+    }
+
+    modalBody.querySelectorAll('.cfc-qv__option-group').forEach(function (group) {
+      var optIdx = parseInt(group.dataset.optIdx, 10);
+      group.querySelectorAll('.cfc-qv__opt-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          group.querySelectorAll('.cfc-qv__opt-btn').forEach(function (b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          selectedOpts[optIdx] = btn.dataset.val;
+          var lbl = document.getElementById('cfc-qv-opt-val-' + optIdx);
+          if (lbl) lbl.textContent = btn.dataset.val;
+          var newVariant = findVariant(selectedOpts);
+          if (newVariant) { cv = newVariant; updateQV(newVariant); }
+        });
+      });
+    });
+
+    /* ── Wire QV add-to-cart ── */
+    var qvAtc = document.getElementById('cfc-qv-atc-' + productId);
+    if (qvAtc) {
+      qvAtc.addEventListener('click', function () {
+        addToCart(qvAtc.dataset.variantId, qvAtc, function () {
+          setTimeout(closeModal, 350);
+        });
+      });
+    }
+  }
+
+  /* Open modal on Quick View or Choose Options click */
+  document.querySelectorAll(
+    '.cfc-quick-view-btn[data-section-id="' + SECTION_ID + '"],' +
+    '.cfc-choose-btn[data-section-id="' + SECTION_ID + '"]'
+  ).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      modalOpener = btn;
+      var productId = btn.dataset.productId;
+
+      modalBody.innerHTML =
+        '<div class="cfc-modal__loading">'
+        + '<svg class="cfc-spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-dasharray="45" stroke-dashoffset="35"/></svg>'
+        + '</div>';
+
+      openModal();
+      /* Small delay so modal animation starts first */
+      requestAnimationFrame(function () { buildQuickView(productId); });
+    });
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Custom Collection",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "default": 8,
+      "label": "Products to show"
+    },
+    {
+      "type": "header",
+      "content": "Section title"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "Featured Collection",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" },
+        { "value": "hxl", "label": "Extra large" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "Show \"View all\" button"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Product grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "Show product vendor"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Collection"
+    }
+  ]
+}
+{% endschema %}

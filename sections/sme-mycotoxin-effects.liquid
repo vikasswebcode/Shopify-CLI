@@ -1,0 +1,559 @@
+<section class="sme-section" style="background-color: {{ section.settings.bg_color }}; padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="page-width">
+
+    {%- comment -%}── TOP ROW: Toxin Cards + Heading Text ──{%- endcomment -%}
+    <div class="sme-top-row">
+
+      {%- comment -%} LEFT: Toxin cards {%- endcomment -%}
+      <div class="sme-toxins-col">
+        {%- if section.settings.toxins_label != blank -%}
+          <p class="sme-side-label">{{ section.settings.toxins_label }}</p>
+        {%- endif -%}
+
+        <div class="sme-cards-wrap">
+          {%- assign toxin_blocks = section.blocks | where: 'type', 'toxin' -%}
+          {%- for block in toxin_blocks -%}
+            <div class="sme-card" {{ block.shopify_attributes }}>
+              <p class="sme-card-top">{{ block.settings.top_label }}</p>
+              <div class="sme-card-icon-wrap">
+                {%- if block.settings.icon != blank -%}
+                  {{ block.settings.icon | image_url: width: 120 | image_tag: loading: 'lazy', class: 'sme-card-icon-img' }}
+                {%- else -%}
+                  <div class="sme-card-icon-placeholder"></div>
+                {%- endif -%}
+              </div>
+              <p class="sme-card-bottom">{{ block.settings.bottom_label }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- comment -%} RIGHT: Heading + Text {%- endcomment -%}
+      <div class="sme-heading-col">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="sme-heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="sme-body-text">{{ section.settings.text }}</div>
+        {%- endif -%}
+      </div>
+
+    </div>
+
+    {%- comment -%}── BOTTOM ROW: Body Systems ──{%- endcomment -%}
+    <div class="sme-bottom-row">
+
+      {%- comment -%} LEFT: Italic label {%- endcomment -%}
+      <div class="sme-systems-label-col">
+        {%- if section.settings.systems_label != blank -%}
+          <p class="sme-systems-label">{{ section.settings.systems_label }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} RIGHT: System icons {%- endcomment -%}
+      <div class="sme-systems-col">
+        {%- assign system_blocks = section.blocks | where: 'type', 'system' -%}
+        {%- for block in system_blocks -%}
+          <div class="sme-system-item" {{ block.shopify_attributes }}>
+            <p class="sme-system-title">{{ block.settings.title }}</p>
+            <p class="sme-system-desc">{{ block.settings.description }}</p>
+            <div class="sme-system-icon-wrap {% if block.settings.highlight %}sme-system-icon-wrap--active{% endif %}">
+              {%- if block.settings.icon != blank -%}
+                {{ block.settings.icon | image_url: width: 160 | image_tag: loading: 'lazy', class: 'sme-system-icon-img' }}
+              {%- else -%}
+                <div class="sme-system-icon-placeholder"></div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ── Base ─────────────────────────────────────────── */
+  .sme-section {
+    width: 100%;
+  }
+
+  /* ── TOP ROW ──────────────────────────────────────── */
+  .sme-top-row {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin-bottom: 56px;
+  }
+
+  .sme-toxins-col {
+    flex: 0 0 46%;
+    max-width: 46%;
+  }
+
+  .sme-heading-col {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* Side label italic */
+  .sme-side-label {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0 0 14px;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Toxin Cards ────────────────────────────────── */
+  .sme-cards-wrap {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+  }
+
+  /* horizontal connecting line behind cards */
+  .sme-cards-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: 68px;
+    left: 50px;
+    right: 50px;
+    height: 1px;
+    background: #ccc;
+    z-index: 0;
+  }
+
+  .sme-card {
+    flex: 1 1 0;
+    border: 1px solid #d4d4d4;
+    border-radius: 10px;
+    background: #fff;
+    padding: 14px 10px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0 6px;
+  }
+
+  .sme-card:first-child { margin-left: 0; }
+  .sme-card:last-child  { margin-right: 0; }
+
+  .sme-card-top {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #222;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .sme-card-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid #d4d4d4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .sme-card-icon-img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+  }
+
+  .sme-card-icon-placeholder {
+    width: 42px;
+    height: 42px;
+    background: #eee;
+    border-radius: 50%;
+  }
+
+  .sme-card-bottom {
+    font-size: 0.78rem;
+    color: #444;
+    margin: 0;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  /* ── Heading col ────────────────────────────────── */
+  .sme-heading {
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #1a1a1a;
+    margin: 0 0 18px;
+  }
+
+  .sme-body-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #444;
+  }
+
+  .sme-body-text p { margin: 0 0 1em; }
+  .sme-body-text p:last-child { margin-bottom: 0; }
+
+  /* ── BOTTOM ROW ─────────────────────────────────── */
+  .sme-bottom-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 40px;
+  }
+
+  .sme-systems-label-col {
+    flex: 0 0 170px;
+    max-width: 170px;
+    padding-top: 4px;
+  }
+
+  .sme-systems-label {
+    font-style: italic;
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    font-weight: 400;
+    line-height: 1.25;
+    color: #1a1a1a;
+    margin: 0;
+  }
+
+  .sme-systems-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    gap: 16px;
+  }
+
+  .sme-system-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .sme-system-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 4px;
+    align-self: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+
+  .sme-system-desc {
+    font-size: 0.78rem;
+    color: #555;
+    margin: 0 0 16px;
+    line-height: 1.4;
+    align-self: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+
+  .sme-system-icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 1.5px solid #b0b0b0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .sme-system-icon-wrap--active {
+    border: 2.5px solid #1a7a7a;
+  }
+
+  .sme-system-icon-img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+  }
+
+  .sme-system-icon-placeholder {
+    width: 52px;
+    height: 52px;
+    background: #eee;
+    border-radius: 50%;
+  }
+
+  /* ── Tablet ─────────────────────────────────────── */
+  @media screen and (max-width: 989px) {
+    .sme-top-row {
+      gap: 32px;
+    }
+
+    .sme-toxins-col {
+      flex: 0 0 44%;
+      max-width: 44%;
+    }
+
+    .sme-systems-label-col {
+      flex: 0 0 130px;
+      max-width: 130px;
+    }
+
+    .sme-system-icon-wrap {
+      width: 64px;
+      height: 64px;
+    }
+
+    .sme-system-icon-img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  /* ── Mobile ─────────────────────────────────────── */
+  @media screen and (max-width: 749px) {
+    .sme-top-row {
+      flex-direction: column;
+      gap: 28px;
+      margin-bottom: 36px;
+    }
+
+    .sme-toxins-col {
+      flex: none;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .sme-cards-wrap::before {
+      display: none;
+    }
+
+    .sme-bottom-row {
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .sme-systems-label-col {
+      flex: none;
+      max-width: 100%;
+    }
+
+    .sme-systems-col {
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .sme-system-item {
+      flex: 0 0 calc(33.33% - 14px);
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .sme-system-item {
+      flex: 0 0 calc(50% - 10px);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Mycotoxin Effects",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Top Row"
+    },
+    {
+      "type": "text",
+      "id": "toxins_label",
+      "label": "Toxins label (italic)",
+      "default": "Toxins & Effects"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Systemic Effects of Mycotoxin Exposure on the Body"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Body text",
+      "default": "<p>Mycotoxins inhibit protein synthesis (Pestka, 2010). Damp exposure triggers inflammation and alters brain signaling, causing systemic symptoms in water-damaged buildings.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Bottom Row"
+    },
+    {
+      "type": "text",
+      "id": "systems_label",
+      "label": "Body Systems label (italic)",
+      "default": "Body Systems Affected"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#fefbe8"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "toxin",
+      "name": "Toxin Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "top_label",
+          "label": "Top label",
+          "default": "Mycotoxins"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon image"
+        },
+        {
+          "type": "text",
+          "id": "bottom_label",
+          "label": "Bottom label",
+          "default": "Cross blood-brain barrier"
+        }
+      ]
+    },
+    {
+      "type": "system",
+      "name": "Body System",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Brain"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Memory loss, cognitive decline, mood swings"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon image"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Highlight circle (teal border)",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mycotoxin Effects",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "toxin",
+          "settings": {
+            "top_label": "Trichothecenes (black mold)",
+            "bottom_label": "Protein synthesis inhibitors"
+          }
+        },
+        {
+          "type": "toxin",
+          "settings": {
+            "top_label": "Mycotoxins",
+            "bottom_label": "Cross blood-brain barrier"
+          }
+        },
+        {
+          "type": "toxin",
+          "settings": {
+            "top_label": "Oxidative Stress",
+            "bottom_label": "Cellular dysfunction"
+          }
+        },
+        {
+          "type": "system",
+          "settings": {
+            "title": "Sinuses",
+            "description": "Chronic inflammation, nasal-congestion"
+          }
+        },
+        {
+          "type": "system",
+          "settings": {
+            "title": "Brain",
+            "description": "Memory loss, cognitive decline, mood swings"
+          }
+        },
+        {
+          "type": "system",
+          "settings": {
+            "title": "Gut",
+            "description": "Permeability, microbiome imbalance, nausea"
+          }
+        },
+        {
+          "type": "system",
+          "settings": {
+            "title": "Immune",
+            "description": "Suppression, histamine overload"
+          }
+        },
+        {
+          "type": "system",
+          "settings": {
+            "title": "Hormones",
+            "description": "Thyroid disruption, fatigue",
+            "highlight": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

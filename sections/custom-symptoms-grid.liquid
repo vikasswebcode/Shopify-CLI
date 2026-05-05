@@ -1,0 +1,273 @@
+{%- style -%}
+  .sg-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+  }
+{%- endstyle -%}
+
+<section class="sg-section-{{ section.id }} sg-section">
+  <div class="sg-inner">
+
+    <!-- Decorative blobs -->
+    <span class="sg-blob sg-blob--yellow" aria-hidden="true"></span>
+    <span class="sg-blob sg-blob--pink"   aria-hidden="true"></span>
+
+    <!-- Left title -->
+    <div class="sg-title-col">
+      {%- if section.settings.title != blank -%}
+        <h2 class="sg-title">{{ section.settings.title | newline_to_br }}</h2>
+      {%- endif -%}
+    </div>
+
+    <!-- Right grid -->
+    <div class="sg-grid">
+      {%- for block in section.blocks -%}
+        <div class="sg-card" {{ block.shopify_attributes }}>
+          {%- if block.settings.heading != blank -%}
+            <p class="sg-card__heading">{{ block.settings.heading | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.description != blank -%}
+            <p class="sg-card__desc">{{ block.settings.description | escape }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .sg-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sg-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 48px;
+    max-width: var(--page-width, 1200px);
+    margin: 0 auto;
+    padding: 72px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Left title ── */
+  .sg-title-col {
+    flex: 0 0 220px;
+    min-width: 180px;
+  }
+
+  .sg-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0;
+    color: inherit;
+  }
+
+  /* ── Right grid ── */
+  .sg-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  /* ── Cards ── */
+  .sg-card {
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sg-card__heading {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111;
+  }
+
+  .sg-card__desc {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #444;
+  }
+
+  /* ── Decorative blobs ── */
+  .sg-blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .sg-blob--yellow {
+    width: 200px;
+    height: 200px;
+    background: #d4e04a;
+    bottom: -80px;
+    left: 60px;
+    opacity: 0.75;
+  }
+
+  .sg-blob--pink {
+    width: 130px;
+    height: 130px;
+    background: #e07070;
+    top: -40px;
+    right: -30px;
+    opacity: 0.6;
+  }
+
+  /* ── Responsive ── */
+  @media screen and (max-width: 900px) {
+    .sg-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .sg-inner {
+      flex-direction: column;
+      gap: 32px;
+      padding: 48px 20px;
+    }
+
+    .sg-title-col {
+      flex: none;
+    }
+
+    .sg-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sg-blob--yellow {
+      width: 120px;
+      height: 120px;
+      bottom: -40px;
+      left: 10px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Symptoms Grid",
+  "tag": "div",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Left Title",
+      "default": "Top 10 Symptoms\nof Mold\nExposure"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#cddde4"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "symptom",
+      "name": "Symptom Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Symptom Heading",
+          "default": "Chronic fatigue or low energy"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Feeling persistently drained despite adequate rest."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Symptoms Grid",
+      "blocks": [
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Chronic fatigue or low energy",
+            "description": "Feeling persistently drained despite adequate rest."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Brain fog / poor concentration",
+            "description": "Trouble focusing, memory lapses, or slowed thinking."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Sinus and respiratory issues",
+            "description": "Congestion, post-nasal drip, cough, or shortness of breath."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Headaches or migraines",
+            "description": "Frequent or pressure-type headaches."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Mood changes",
+            "description": "Anxiety, irritability, or low mood without a clear trigger."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Joint or muscle aches",
+            "description": "Unexplained body pain or stiffness."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Skin symptoms",
+            "description": "Rashes, itching, or heightened sensitivity."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Digestive upset",
+            "description": "Bloating, nausea, abdominal discomfort, or changes in bowel habits."
+          }
+        },
+        {
+          "type": "symptom",
+          "settings": {
+            "heading": "Sleep disturbances",
+            "description": "Difficulty falling or staying asleep, unrefreshing sleep. Increased sensitivity to chemicals or odors — reacting strongly to perfumes, cleaners, or smoke."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

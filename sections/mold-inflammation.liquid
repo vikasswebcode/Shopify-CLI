@@ -1,0 +1,326 @@
+{%- liquid
+  assign img_pos = section.settings.image_position
+-%}
+
+<section
+  class="mi-section"
+  style="background-color: {{ section.settings.bg_color }}; padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="page-width">
+    <div class="mi-grid {% if img_pos == 'left' %}mi-grid--reverse{% endif %}">
+
+      <!-- Content -->
+      <div class="mi-content">
+        {%- if section.settings.subheading != blank -%}
+          <p class="mi-subheading" style="color: {{ section.settings.accent_color }};">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <{{ section.settings.heading_tag }} class="mi-heading" style="color: {{ section.settings.heading_color }};">
+            {{ section.settings.heading }}
+          </{{ section.settings.heading_tag }}>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="mi-text" style="color: {{ section.settings.text_color }};">
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.btn_label != blank and section.settings.btn_url != blank -%}
+          <a
+            href="{{ section.settings.btn_url }}"
+            class="mi-btn {% if section.settings.btn_style == 'outline' %}mi-btn--outline{% endif %}"
+            style="
+              {%- if section.settings.btn_style == 'solid' -%}
+                background-color: {{ section.settings.accent_color }}; border-color: {{ section.settings.accent_color }}; color: #fff;
+              {%- else -%}
+                border-color: {{ section.settings.accent_color }}; color: {{ section.settings.accent_color }};
+              {%- endif -%}
+            "
+          >
+            {{ section.settings.btn_label }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      <!-- Image -->
+      <div class="mi-image">
+        {%- if section.settings.image != blank -%}
+          {{
+            section.settings.image
+            | image_url: width: 900
+            | image_tag:
+              loading: 'lazy',
+              widths: '400,600,900',
+              sizes: '(max-width: 749px) 100vw, 50vw',
+              class: 'mi-img'
+          }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'mi-img mi-img--placeholder' }}
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .mi-section {
+    width: 100%;
+  }
+
+  .mi-grid {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .mi-grid--reverse {
+    flex-direction: row-reverse;
+  }
+
+  .mi-content,
+  .mi-image {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* Subheading */
+  .mi-subheading {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+
+  /* Heading */
+  .mi-heading {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 20px;
+  }
+
+  .mi-heading p { margin: 0; }
+
+  /* Body text */
+  .mi-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 28px;
+  }
+
+  .mi-text p { margin: 0 0 1em; }
+  .mi-text p:last-child { margin-bottom: 0; }
+
+  /* Button */
+  .mi-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+
+  .mi-btn:hover { opacity: 0.82; }
+
+  .mi-btn--outline {
+    background-color: transparent !important;
+  }
+
+  /* Image */
+  .mi-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .mi-img--placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #f0f0f0;
+    border-radius: 8px;
+  }
+
+  /* Tablet */
+  @media screen and (max-width: 989px) {
+    .mi-grid {
+      gap: 36px;
+    }
+  }
+
+  /* Mobile */
+  @media screen and (max-width: 749px) {
+    .mi-grid,
+    .mi-grid--reverse {
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Image left setting → on mobile image stays on top */
+    .mi-grid--reverse .mi-image {
+      order: -1;
+    }
+
+    .mi-content,
+    .mi-image {
+      width: 100%;
+    }
+
+    .mi-heading {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Mold Inflammation",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "right", "label": "Right  (Content left)" },
+        { "value": "left",  "label": "Left   (Content right)" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>How Mold-Related Inflammation May Affect Brain Function</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Body text",
+      "default": "<p>Indoor mold produces mycotoxins and inflammatory molecules affecting neurological function. Damp building exposure increases cytokines, impacting mood and cognition.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "btn_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "btn_style",
+      "label": "Button style",
+      "options": [
+        { "value": "solid",   "label": "Solid" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#444444"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent / Button color",
+      "default": "#1a6b6b"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px", 
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mold Inflammation",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

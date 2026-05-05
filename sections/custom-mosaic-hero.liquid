@@ -1,0 +1,809 @@
+{%- style -%}
+  /* ── Mosaic Hero ─────────────────────────────────────── */
+  #MosaicHero-{{ section.id }} {
+    display: grid;
+    grid-template-columns: {{ section.settings.side_col_ratio }}fr {{ section.settings.center_col_ratio }}fr {{ section.settings.side_col_ratio }}fr;
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.outer_gap }}px;
+    gap: {{ section.settings.inner_gap }}px;
+    overflow: hidden;
+  }
+
+  /* ── Side columns ─────────────────────────────────────── */
+  .mosaic-hero__side {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.inner_gap }}px;
+  }
+
+  .mosaic-hero__side-item {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: block;
+  }
+
+  .mosaic-hero__side-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mosaic-hero__side-item:hover img {
+    transform: scale(1.05);
+  }
+
+  .mosaic-hero__side-item .mosaic-hero__side-overlay {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .mosaic-hero__side-item:hover .mosaic-hero__side-overlay {
+    opacity: {{ section.settings.side_hover_overlay | divided_by: 100.0 }};
+  }
+
+  /* ── Center slideshow ─────────────────────────────────── */
+  .mosaic-hero__center {
+    position: relative;
+    overflow: hidden;
+    min-height: {{ section.settings.section_height }}px;
+  }
+
+  .mosaic-hero__slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+  }
+
+  .mosaic-hero__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+
+  .mosaic-hero__slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
+    min-height: inherit;
+  }
+
+  .mosaic-hero__slide-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .mosaic-hero__slide-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mosaic-hero__slide-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .mosaic-hero__slide-content {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: {{ section.settings.content_h_align }};
+    justify-content: {{ section.settings.content_v_align }};
+    padding: 4rem 3rem;
+    text-align: {{ section.settings.text_align }};
+  }
+
+  .mosaic-hero__subheading {
+    display: block;
+    font-size: 1.1rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .mosaic-hero__heading {
+    margin: 0 0 1.4rem;
+    line-height: 1.1;
+  }
+
+  .mosaic-hero__text {
+    margin: 0 0 2.4rem;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    max-width: 48rem;
+  }
+
+  .mosaic-hero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    justify-content: {%- if section.settings.text_align == 'left' -%}flex-start{%- elsif section.settings.text_align == 'right' -%}flex-end{%- else -%}center{%- endif -%};
+  }
+
+  /* ── Slide dots ───────────────────────────────────────── */
+  .mosaic-hero__dots {
+    position: absolute;
+    bottom: 1.6rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: .8rem;
+    z-index: 10;
+  }
+
+  .mosaic-hero__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.5);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background .3s ease, transform .3s ease;
+  }
+
+  .mosaic-hero__dot.is-active {
+    background: #fff;
+    transform: scale(1.3);
+  }
+
+  /* ── Slide arrows ─────────────────────────────────────── */
+  .mosaic-hero__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255,255,255,.2);
+    border: 1px solid rgba(255,255,255,.4);
+    color: #fff;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s ease;
+  }
+
+  .mosaic-hero__arrow:hover { background: rgba(255,255,255,.4); }
+  .mosaic-hero__arrow--prev { left: 1.2rem; }
+  .mosaic-hero__arrow--next { right: 1.2rem; }
+
+  {%- assign _slide_count = section.blocks | where: 'type', 'slide' | size -%}
+  {%- if _slide_count <= 1 -%}
+    .mosaic-hero__dots,
+    .mosaic-hero__arrow { display: none !important; }
+  {%- endif -%}
+
+  /* ── Responsive ───────────────────────────────────────── */
+  @media screen and (max-width: 749px) {
+    #MosaicHero-{{ section.id }} {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      padding: {{ section.settings.outer_gap | divided_by: 2 }}px;
+      gap: {{ section.settings.inner_gap }}px;
+    }
+
+    .mosaic-hero__side {
+      flex-direction: row;
+      height: 22vw;
+    }
+
+    .mosaic-hero__center {
+      min-height: {{ section.settings.section_height | times: 0.7 | round }}px;
+      order: -1;
+    }
+
+    .mosaic-hero__slide-content {
+      padding: 2.4rem 2rem;
+    }
+
+    .mosaic-hero__side--right {
+      order: 2;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign slide_blocks = section.blocks | where: 'type', 'slide'
+  assign has_multiple_slides = false
+  if slide_blocks.size > 1
+    assign has_multiple_slides = true
+  endif
+-%}
+
+<div
+  id="MosaicHero-{{ section.id }}"
+  class="mosaic-hero{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+  data-autoplay="{{ section.settings.autoplay }}"
+  data-autoplay-speed="{{ section.settings.autoplay_speed }}"
+>
+
+  {%- comment -%}── Left Column ──────────────────────────────{%- endcomment -%}
+  <div class="mosaic-hero__side mosaic-hero__side--left">
+    {%- for i in (1..2) -%}
+      {%- liquid
+        assign img_key  = 'left_image_' | append: i
+        assign link_key = 'left_image_' | append: i | append: '_link'
+        assign img      = section.settings[img_key]
+        assign lnk      = section.settings[link_key]
+      -%}
+      <a
+        class="mosaic-hero__side-item"
+        {% if lnk != blank %}href="{{ lnk }}"{% else %}aria-disabled="true"{% endif %}
+      >
+        {%- if img != blank -%}
+          {{ img | image_url: width: 800 | image_tag: sizes: '25vw', widths: '300,500,700,900', alt: img.alt }}
+        {%- else -%}
+          {{ 'hero-apparel-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+        <div class="mosaic-hero__side-overlay" aria-hidden="true"></div>
+      </a>
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%}── Center Slideshow ─────────────────────────{%- endcomment -%}
+  <div class="mosaic-hero__center" role="region" aria-label="Hero slideshow">
+    <div class="mosaic-hero__slides" id="MosaicSlides-{{ section.id }}">
+
+      {%- for block in slide_blocks -%}
+        {%- liquid
+          assign is_first = false
+          if forloop.index == 1
+            assign is_first = true
+          endif
+        -%}
+        <div
+          class="mosaic-hero__slide{% if is_first %} is-active{% endif %}"
+          data-slide-index="{{ forloop.index0 }}"
+          {{ block.shopify_attributes }}
+        >
+          {%- comment -%}Background image{%- endcomment -%}
+          <div class="mosaic-hero__slide-bg">
+            {%- if block.settings.slide_image != blank -%}
+              {{ block.settings.slide_image | image_url: width: 2400 | image_tag: sizes: '60vw', widths: '600,900,1200,1600,2000,2400', alt: block.settings.slide_image.alt, fetchpriority: 'high' }}
+            {%- else -%}
+              {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+
+          {%- comment -%}Overlay{%- endcomment -%}
+          <div
+            class="mosaic-hero__slide-overlay"
+            style="background: {{ block.settings.overlay_color }}; opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};"
+            aria-hidden="true"
+          ></div>
+
+          {%- comment -%}Text content{%- endcomment -%}
+          <div class="mosaic-hero__slide-content">
+            {%- if block.settings.subheading != blank -%}
+              <span
+                class="mosaic-hero__subheading"
+                style="color: {{ block.settings.text_color }};"
+              >
+                {{ block.settings.subheading | escape }}
+              </span>
+            {%- endif -%}
+
+            {%- if block.settings.heading != blank -%}
+              <h2
+                class="mosaic-hero__heading {{ block.settings.heading_size }}"
+                style="color: {{ block.settings.text_color }};"
+              >
+                {{ block.settings.heading }}
+              </h2>
+            {%- endif -%}
+
+            {%- if block.settings.description != blank -%}
+              <div
+                class="mosaic-hero__text rte"
+                style="color: {{ block.settings.text_color }};"
+              >
+                {{ block.settings.description }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.btn1_label != blank or block.settings.btn2_label != blank -%}
+              <div class="mosaic-hero__buttons">
+                {%- if block.settings.btn1_label != blank -%}
+                  <a
+                    href="{{ block.settings.btn1_link | default: '#' }}"
+                    class="button{% if block.settings.btn1_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                    style="{% if block.settings.btn1_custom_color != blank and block.settings.btn1_custom_color != 'rgba(0,0,0,0)' %}background-color: {{ block.settings.btn1_custom_color }}; border-color: {{ block.settings.btn1_custom_color }};{% endif %}"
+                  >
+                    {{- block.settings.btn1_label | escape -}}
+                  </a>
+                {%- endif -%}
+                {%- if block.settings.btn2_label != blank -%}
+                  <a
+                    href="{{ block.settings.btn2_link | default: '#' }}"
+                    class="button{% if block.settings.btn2_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                  >
+                    {{- block.settings.btn2_label | escape -}}
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- else -%}
+        {%- comment -%}Empty state in theme editor{%- endcomment -%}
+        <div class="mosaic-hero__slide is-active">
+          <div class="mosaic-hero__slide-bg">
+            {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          <div class="mosaic-hero__slide-overlay" style="background:#000;opacity:.35;" aria-hidden="true"></div>
+          <div class="mosaic-hero__slide-content">
+            <span class="mosaic-hero__subheading" style="color:#fff;">The New Season Edit</span>
+            <h2 class="mosaic-hero__heading h1" style="color:#fff;">Your Heading Here</h2>
+            <div class="mosaic-hero__text rte" style="color:#fff;"><p>Add slides using the + block button below.</p></div>
+          </div>
+        </div>
+      {%- endfor -%}
+
+    </div>
+
+    {%- comment -%}── Navigation arrows ──{%- endcomment -%}
+    {%- if has_multiple_slides -%}
+      <button
+        class="mosaic-hero__arrow mosaic-hero__arrow--prev"
+        aria-label="Previous slide"
+        data-mosaic-prev="{{ section.id }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button
+        class="mosaic-hero__arrow mosaic-hero__arrow--next"
+        aria-label="Next slide"
+        data-mosaic-next="{{ section.id }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    {%- endif -%}
+
+    {%- comment -%}── Dots ──{%- endcomment -%}
+    {%- if has_multiple_slides -%}
+      <div class="mosaic-hero__dots" role="tablist" aria-label="Slide navigation">
+        {%- for block in slide_blocks -%}
+          <button
+            class="mosaic-hero__dot{% if forloop.index == 1 %} is-active{% endif %}"
+            role="tab"
+            aria-selected="{% if forloop.index == 1 %}true{% else %}false{% endif %}"
+            aria-label="Go to slide {{ forloop.index }}"
+            data-mosaic-dot="{{ forloop.index0 }}"
+          ></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}── Right Column ─────────────────────────────{%- endcomment -%}
+  <div class="mosaic-hero__side mosaic-hero__side--right">
+    {%- for i in (1..2) -%}
+      {%- liquid
+        assign img_key  = 'right_image_' | append: i
+        assign link_key = 'right_image_' | append: i | append: '_link'
+        assign img      = section.settings[img_key]
+        assign lnk      = section.settings[link_key]
+      -%}
+      <a
+        class="mosaic-hero__side-item"
+        {% if lnk != blank %}href="{{ lnk }}"{% else %}aria-disabled="true"{% endif %}
+      >
+        {%- if img != blank -%}
+          {{ img | image_url: width: 800 | image_tag: sizes: '25vw', widths: '300,500,700,900', alt: img.alt }}
+        {%- else -%}
+          {%- if forloop.index == 1 -%}
+            {{ 'hero-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- else -%}
+            {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        {%- endif -%}
+        <div class="mosaic-hero__side-overlay" aria-hidden="true"></div>
+      </a>
+    {%- endfor -%}
+  </div>
+
+</div>
+
+{%- if has_multiple_slides or section.settings.autoplay -%}
+<script>
+(function () {
+  var root      = document.getElementById('MosaicHero-{{ section.id }}');
+  if (!root) return;
+
+  var slides    = Array.from(root.querySelectorAll('.mosaic-hero__slide'));
+  var dots      = Array.from(root.querySelectorAll('[data-mosaic-dot]'));
+  var btnPrev   = root.querySelector('[data-mosaic-prev]');
+  var btnNext   = root.querySelector('[data-mosaic-next]');
+  var total     = slides.length;
+  var current   = 0;
+  var autoplay  = root.dataset.autoplay === 'true';
+  var speed     = parseInt(root.dataset.autoplaySpeed, 10) || 5000;
+  var timer;
+
+  if (total <= 1) return;
+
+  function goTo(idx) {
+    slides[current].classList.remove('is-active');
+    if (dots[current]) { dots[current].classList.remove('is-active'); dots[current].setAttribute('aria-selected','false'); }
+    current = (idx + total) % total;
+    slides[current].classList.add('is-active');
+    if (dots[current]) { dots[current].classList.add('is-active'); dots[current].setAttribute('aria-selected','true'); }
+  }
+
+  function startTimer() {
+    if (!autoplay) return;
+    clearInterval(timer);
+    timer = setInterval(function () { goTo(current + 1); }, speed);
+  }
+
+  if (btnPrev) btnPrev.addEventListener('click', function () { goTo(current - 1); startTimer(); });
+  if (btnNext) btnNext.addEventListener('click', function () { goTo(current + 1); startTimer(); });
+
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      goTo(parseInt(dot.dataset.mosaicDot, 10));
+      startTimer();
+    });
+  });
+
+  /* Swipe support */
+  var startX = 0;
+  root.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  root.addEventListener('touchend', function (e) {
+    var diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) { goTo(diff > 0 ? current + 1 : current - 1); startTimer(); }
+  }, { passive: true });
+
+  startTimer();
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Mosaic Hero",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "min": 300,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Center panel height",
+      "default": 560
+    },
+    {
+      "type": "range",
+      "id": "center_col_ratio",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Center column width ratio",
+      "info": "Relative to side columns (e.g. 3 = 3:1:1 grid)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "side_col_ratio",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Side column width ratio",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "outer_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Outer padding",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "inner_gap",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between panels",
+      "default": 6
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background color",
+      "default": "#f5f0eb"
+    },
+    {
+      "type": "header",
+      "content": "Content alignment"
+    },
+    {
+      "type": "select",
+      "id": "content_v_align",
+      "label": "Vertical alignment",
+      "options": [
+        { "value": "flex-start", "label": "Top" },
+        { "value": "center",     "label": "Middle" },
+        { "value": "flex-end",   "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_h_align",
+      "label": "Horizontal alignment",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center",     "label": "Center" },
+        { "value": "flex-end",   "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Slideshow"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 2000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Auto-rotate speed",
+      "default": 5000
+    },
+    {
+      "type": "header",
+      "content": "Left Side Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_1",
+      "label": "Left image — top"
+    },
+    {
+      "type": "url",
+      "id": "left_image_1_link",
+      "label": "Left image top — link"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_2",
+      "label": "Left image — bottom"
+    },
+    {
+      "type": "url",
+      "id": "left_image_2_link",
+      "label": "Left image bottom — link"
+    },
+    {
+      "type": "header",
+      "content": "Right Side Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image_1",
+      "label": "Right image — top"
+    },
+    {
+      "type": "url",
+      "id": "right_image_1_link",
+      "label": "Right image top — link"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image_2",
+      "label": "Right image — bottom"
+    },
+    {
+      "type": "url",
+      "id": "right_image_2_link",
+      "label": "Right image bottom — link"
+    },
+    {
+      "type": "range",
+      "id": "side_hover_overlay",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "label": "Side image hover darkening",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Background"
+        },
+        {
+          "type": "image_picker",
+          "id": "slide_image",
+          "label": "Background image"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay color",
+          "default": "#1a3a3a"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 50
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "The New Season Edit",
+          "info": "Displayed above the heading in small caps"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "The Art of Spring"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "options": [
+            { "value": "h2",   "label": "Small" },
+            { "value": "h1",   "label": "Medium" },
+            { "value": "h0",   "label": "Large" },
+            { "value": "hxl",  "label": "Extra large" },
+            { "value": "hxxl", "label": "Huge" }
+          ],
+          "default": "h1"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Embrace sage green tones and delicate pastels</p>"
+        },
+        {
+          "type": "header",
+          "content": "Button 1"
+        },
+        {
+          "type": "text",
+          "id": "btn1_label",
+          "label": "Button label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "btn1_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "btn1_secondary",
+          "label": "Use outline style",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "btn1_custom_color",
+          "label": "Custom button color",
+          "info": "Leave blank to use theme default"
+        },
+        {
+          "type": "header",
+          "content": "Button 2 (optional)"
+        },
+        {
+          "type": "text",
+          "id": "btn2_label",
+          "label": "Button 2 label"
+        },
+        {
+          "type": "url",
+          "id": "btn2_link",
+          "label": "Button 2 link"
+        },
+        {
+          "type": "checkbox",
+          "id": "btn2_secondary",
+          "label": "Use outline style",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mosaic Hero",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "subheading": "The New Season Edit",
+            "heading": "The Art of Spring",
+            "description": "<p>Embrace sage green tones and delicate pastels</p>",
+            "btn1_label": "Shop Art",
+            "overlay_color": "#1a3a3a",
+            "overlay_opacity": 50
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
