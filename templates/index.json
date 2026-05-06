@@ -222,14 +222,8 @@
     },
     "custom_how_it_works_WHMnX8": {
       "type": "custom-how-it-works",
-      "blocks": {
-              
-      },
       "name": "How It Works",
-      "settings": {
-        "section_bg": "#f8f8f8",
-        "custom_class": ""
-      }
+      "settings": {}
     },
     "custom_featured_collection_8mEwVh": {
       "type": "custom-featured-collection",
