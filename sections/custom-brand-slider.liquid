@@ -198,9 +198,9 @@
         clickable: true
       },
       breakpoints: {
-        480: { slidesPerView: 3, spaceBetween: 15 },
-        768: { slidesPerView: 4, spaceBetween: 20 },
-        1024: { slidesPerView: {{ section.settings.slides_per_view }}, spaceBetween: 20 }
+        320: { slidesPerView: 1.5, spaceBetween: 15 },
+        768: { slidesPerView: 3, spaceBetween: 20 },
+        1024: { slidesPerView: 6.5, spaceBetween: 20 }
       }
     });
   })();
@@ -238,15 +238,6 @@
       "type": "url",
       "id": "btn_link",
       "label": "Button link"
-    },
-    {
-      "type": "range",
-      "id": "slides_per_view",
-      "min": 3,
-      "max": 8,
-      "step": 1,
-      "label": "Logos visible on desktop",
-      "default": 5
     },
     {
       "type": "select",
