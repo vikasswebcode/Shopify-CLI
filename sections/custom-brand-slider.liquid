@@ -1,0 +1,281 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+<style>
+  .brand-slider {
+    padding: 5rem 0 0;
+  }
+
+  .brand-slider__top {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+  }
+
+  .brand-slider__heading {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 1.6rem;
+    line-height: 1.2;
+  }
+
+  .brand-slider__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .brand-slider__desc {
+    font-size: 1.5rem;
+    line-height: 1.7;
+    opacity: 0.75;
+    max-width: 60rem;
+    margin: 0;
+  }
+
+  .brand-slider__view-all {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #e53935;
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 1rem 2.4rem;
+    border-radius: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .brand-slider__view-all:hover {
+    background: #c62828;
+    color: #fff;
+  }
+
+  .brand-slider__swiper-wrap {
+    width: 100%;
+  }
+
+  .brand-slider .swiper {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .brand-slider .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-slider__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 2.5rem;
+    border-right: 1px solid rgba(0,0,0,0.1);
+    width: 100%;
+    min-height: 10rem;
+  }
+
+  .brand-slider__item img {
+    max-height: 5.5rem;
+    width: auto;
+    max-width: 14rem;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.55;
+    transition: filter 0.3s, opacity 0.3s;
+  }
+
+  .brand-slider__item:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+
+  .brand-slider__item a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .brand-slider__heading {
+      font-size: 2.2rem;
+    }
+
+    .brand-slider__meta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .brand-slider__top {
+      padding: 0 1.5rem 2.4rem;
+    }
+  }
+</style>
+
+<div class="brand-slider">
+
+  <div class="brand-slider__top">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="brand-slider__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank or section.settings.btn_label != blank -%}
+      <div class="brand-slider__meta">
+        {%- if section.settings.description != blank -%}
+          <p class="brand-slider__desc">{{ section.settings.description | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.btn_label != blank -%}
+          <a href="{{ section.settings.btn_link | default: '#' }}" class="brand-slider__view-all">
+            {{ section.settings.btn_label | escape }}
+          </a>
+        {%- endif -%} 
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="brand-slider__swiper-wrap">
+      <div class="swiper brand-swiper-{{ section.id }}">
+        <div class="swiper-wrapper">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.logo != blank -%}
+              <div class="swiper-slide" {{ block.shopify_attributes }}>
+                <div class="brand-slider__item">
+                  {%- if block.settings.link != blank -%}
+                    <a href="{{ block.settings.link }}" aria-label="{{ block.settings.logo.alt | default: 'Brand' }}">
+                  {%- endif -%}
+                  {{
+                    block.settings.logo
+                    | image_url: width: 400
+                    | image_tag:
+                      widths: '100, 160, 240, 320, 400',
+                      sizes: '160px',
+                      alt: block.settings.logo.alt
+                  }}
+                  {%- if block.settings.link != blank -%}
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  (function () {
+    new Swiper('.brand-swiper-{{ section.id }}', {
+      loop: true,
+      speed: 800,
+      autoplay: {
+        delay: {{ section.settings.autoplay_speed }},
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true
+      },
+      slidesPerView: 2,
+      spaceBetween: 0,
+      breakpoints: {
+        480: { slidesPerView: 3 },
+        768: { slidesPerView: 4 },
+        1024: { slidesPerView: {{ section.settings.slides_per_view }} }
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brand Slider",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 20,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Brands"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "placeholder": "e.g. We work with the best brands"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "label": "Logos visible on desktop",
+      "default": 5
+    },
+    {
+      "type": "select",
+      "id": "autoplay_speed",
+      "label": "Auto-slide speed",
+      "options": [
+        { "value": "1500", "label": "Fast (1.5s)" },
+        { "value": "2500", "label": "Medium (2.5s)" },
+        { "value": "3500", "label": "Slow (3.5s)" }
+      ],
+      "default": "2500"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand logo"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Slider",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}
