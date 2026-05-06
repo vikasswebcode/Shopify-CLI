@@ -73,31 +73,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 2.5rem;
-    border-right: 1px solid rgba(0,0,0,0.1);
+    padding: 15px;
+    background: #f0f0f0;
     width: 100%;
-    min-height: 10rem;
   }
 
   .brand-slider__item img {
-    max-height: 5.5rem;
-    width: auto;
-    max-width: 14rem;
+    width: 100%;
+    height: auto;
     object-fit: contain;
-    filter: grayscale(100%);
-    opacity: 0.55;
-    transition: filter 0.3s, opacity 0.3s;
-  }
-
-  .brand-slider__item:hover img {
-    filter: grayscale(0%);
-    opacity: 1;
+    display: block;
   }
 
   .brand-slider__item a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    width: 100%;
+  }
+
+  .brand-slider .swiper-pagination {
+    position: static;
+    margin-top: 2rem;
+  }
+
+  .brand-slider .swiper-pagination-bullet {
+    background: #ccc;
+    opacity: 1;
+  }
+
+  .brand-slider .swiper-pagination-bullet-active {
+    background: #333;
   }
 
   @media screen and (max-width: 749px) {
@@ -141,7 +145,7 @@
   {%- if section.blocks.size > 0 -%}
     <div class="brand-slider__swiper-wrap">
       <div class="swiper brand-swiper-{{ section.id }}">
-        <div class="swiper-wrapper">
+        <div class="swiper-wrapper" style="align-items:stretch;">
           {%- for block in section.blocks -%}
             {%- if block.settings.logo != blank -%}
               <div class="swiper-slide" {{ block.shopify_attributes }}>
@@ -165,6 +169,7 @@
             {%- endif -%}
           {%- endfor -%}
         </div>
+        <div class="swiper-pagination"></div>
       </div>
     </div>
   {%- endif -%}
@@ -183,11 +188,15 @@
         pauseOnMouseEnter: true
       },
       slidesPerView: 2,
-      spaceBetween: 0,
+      spaceBetween: 15,
+      pagination: {
+        el: '.brand-swiper-{{ section.id }} .swiper-pagination',
+        clickable: true
+      },
       breakpoints: {
-        480: { slidesPerView: 3 },
-        768: { slidesPerView: 4 },
-        1024: { slidesPerView: {{ section.settings.slides_per_view }} }
+        480: { slidesPerView: 3, spaceBetween: 15 },
+        768: { slidesPerView: 4, spaceBetween: 20 },
+        1024: { slidesPerView: {{ section.settings.slides_per_view }}, spaceBetween: 20 }
       }
     });
   })();
