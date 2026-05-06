@@ -1,0 +1,299 @@
+{%- style -%}
+.bo-section-{{ section.id }} .bo__overlay {
+   background-color: {{ section.settings.overlay_color }};
+   opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+}
+.bo-section-{{ section.id }} .bo__content-wrap {
+   text-align: {{ section.settings.text_align }};
+}
+{%- if section.settings.text_align == 'center' -%}
+   .bo-section-{{ section.id }} .bo__text { margin-left: auto; margin-right: auto; }
+   .bo-section-{{ section.id }} .bo__btn-wrap { justify-content: center; }
+{%- elsif section.settings.text_align == 'right' -%}
+   .bo-section-{{ section.id }} .bo__text { margin-left: auto; }
+   .bo-section-{{ section.id }} .bo__btn-wrap { justify-content: flex-end; }
+{%- endif -%}
+
+.bo-section {
+   position: relative;
+   overflow: hidden;
+   display: flex;
+   align-items: center;
+   min-height: 500px;
+}
+.bo__media {
+   position: absolute;
+   inset: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 0;
+}
+.bo__media img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   display: block;
+}
+.bo__media--desktop { 
+   display: block; 
+}
+.bo__media--mobile  { 
+   display: none; 
+}
+.bo__overlay {
+   position: absolute;
+   inset: 0;
+   z-index: 1;
+   pointer-events: none;
+}
+.bo__content-wrap {
+   position: relative;
+   z-index: 2;
+   width: 100%;
+   padding: 20px 0;
+}
+.bo__inner {
+   max-width: 1400px;
+   margin: 0 auto;
+   padding:0 20px;
+}
+.bo__upper-heading {
+   display: block;
+   font-size: 1.3rem;
+   font-weight: 600;
+   letter-spacing: 0.18em;
+   text-transform: uppercase;
+   margin-bottom: 1rem;
+   color: #fff;
+}
+.bo-section .bo__heading {
+   letter-spacing:normal;
+   color: #FFF;
+   text-align: center;
+   font-family: "Nunito Sans";
+   font-size: 60px;
+   font-weight: 700;
+   line-height: normal;
+   margin:0 0 10px;
+}
+.bo__text {
+   max-width: 64rem;
+   color: #FFF;
+   text-align: center;
+   font-family: "Nunito Sans";
+   font-size: 20px;
+   font-style: normal;
+   font-weight: 400;
+   line-height: 27px;
+   letter-spacing:normal;
+}
+.bo__btn-wrap {
+   display: flex;
+}
+@media (max-width: 1439px) {
+   .bo-section {
+      min-height: 360px;
+   }
+   .bo-section .bo__heading {
+      font-size: 48px;
+   }
+   .bo__text {
+      font-size: 18px;
+      line-height: 24px;
+   } 
+   .bo__inner {
+      padding: 0 15px;
+   }
+}
+@media (max-width: 991px) {
+   .bo-section {
+      min-height: 300px;
+   }
+   .bo-section .bo__heading {
+      font-size: 36px;
+   }
+   .bo__text {
+      font-size: 16px;
+      line-height: 24px;
+   }
+}
+@media (max-width: 767px) {
+   .bo__media--desktop { display: none; }
+   .bo__media--mobile  { display: block; }
+   .bo-section {
+      min-height: 280px;
+   }
+   .bo__content-wrap {
+      padding: 50px 0;
+   }
+   .bo-section .bo__heading {
+      font-size: 34px;
+   }
+}
+{%- endstyle -%}
+
+<div class="bo-section bo-section-{{ section.id }}">
+  <div class="bo__media bo__media--desktop">
+    {%- if section.settings.image != blank -%}
+      {{
+        section.settings.image
+        | image_url: width: 3840
+        | image_tag:
+          widths: '750, 1100, 1500, 1780, 2000, 3000, 3840',
+          sizes: '100vw',
+          fetchpriority: 'high',
+          alt: section.settings.image.alt
+      }}
+    {%- else -%}
+      {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </div>
+  <div class="bo__media bo__media--mobile">
+    {%- if section.settings.image_mobile != blank -%}
+      {{
+        section.settings.image_mobile
+        | image_url: width: 1200
+        | image_tag:
+          widths: '375, 550, 750, 1100',
+          sizes: '100vw',
+          fetchpriority: 'high',
+          alt: section.settings.image_mobile.alt
+      }}
+    {%- elsif section.settings.image != blank -%}
+      {{
+        section.settings.image
+        | image_url: width: 1200
+        | image_tag:
+          widths: '375, 550, 750, 1100',
+          sizes: '100vw',
+          fetchpriority: 'high',
+          alt: section.settings.image.alt
+      }}
+    {%- else -%}
+      {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </div>
+
+  <div class="bo__overlay" aria-hidden="true"></div>
+  <div class="bo__content-wrap">
+    <div class="bo__inner">
+      {%- if section.settings.upper_heading != blank -%}
+        <span class="bo__upper-heading">{{ section.settings.upper_heading | escape }}</span>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="bo__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="bo__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.btn_label != blank -%}
+        <div class="bo__btn-wrap">
+          <a href="{{ section.settings.btn_link | default: '#' }}" class="button button--primary">
+            {{- section.settings.btn_label | escape -}}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Banner with Overlay",
+  "tag": "section",
+  "class": "Banner_with_Overlay",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "info": "Optional. Uses desktop image if left empty."
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "upper_heading",
+      "label": "Upper heading",
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to Our Store"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner with Overlay"
+    }
+  ]
+}
+{% endschema %}

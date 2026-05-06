@@ -1,0 +1,209 @@
+<div class="split-img-secc split-img-secc--{{ section.settings.layout }}">
+  <div class="split-img-secc__media">
+    {%- if section.settings.image != blank -%}
+      {{
+        section.settings.image
+        | image_url: width: 1800
+        | image_tag:
+          widths: '375, 550, 750, 900, 1100, 1400, 1800',
+          sizes: '(max-width: 749px) 100vw, 50vw',
+          alt: section.settings.image.alt
+      }}
+    {%- else -%}
+      {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </div>
+
+  <div class="split-img-secc__content">
+
+    {%- if section.settings.upper_heading != blank -%}
+      <span class="split-img-secc__upper">{{ section.settings.upper_heading | escape }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="split-img-secc__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div class="split-img-secc__text rte">{{ section.settings.description }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.btn_label != blank -%}
+      <a
+        href="{{ section.settings.btn_link | default: '#' }}"
+        class="button button--primary">
+        {{- section.settings.btn_label | escape -}}
+      </a>
+    {%- endif -%}
+
+  </div>
+
+</div>
+
+
+{% style %}
+.split-img-secc {
+   display: flex;
+   align-items: center;
+   max-width: 1438px;
+   padding: 100px 20px;
+   margin: 0 auto;
+   gap:50px;
+}
+.split-img-secc--image-left {
+   flex-direction: row;    
+}
+.split-img-secc--image-right {
+   flex-direction: row-reverse;
+}
+.split-img-secc__content {
+   max-width: calc(47.577% - 25px);
+   width: 100%;
+}
+.split-img-secc__media {
+   overflow: hidden;
+   max-width: calc(52.423% - 25px);
+   width: 100%;
+}
+.split-img-secc__media img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   display: block;
+}
+.split-img-secc__upper {
+   display: block;
+   font-size: 1rem;
+   font-weight: 600;
+   text-transform: uppercase;
+   opacity: 0.7;
+   letter-spacing: 1px;
+   margin: 0 0 5px;
+   line-height: 1;
+}
+.split-img-secc__heading {
+   margin: 0 0 10px;
+   color: #000;
+   font-family: "Nunito Sans";
+   font-size: 36px;
+   font-style: normal;
+   font-weight: 600;
+   line-height: normal;
+   letter-spacing:normal;
+}
+.split-img-secc__text {
+   color: #888;
+   font-family: "Nunito Sans";
+   font-size: 16px;
+   font-style: normal;
+   font-weight: 400;
+   line-height: normal;
+}
+@media(max-width:1600px){
+   .split-img-secc {    
+      padding: 70px 20px;
+   }
+}
+@media(max-width:1199px){
+   .split-img-secc {    
+      padding: 50px 20px;
+      gap:25px;
+   }
+   .split-img-secc__content {
+      max-width: calc(47.577% - 12px);
+   }
+   .split-img-secc__media {
+      max-width: calc(52.423% - 12px);
+   }
+   .split-img-secc__heading {
+      font-size: 32px;
+   }
+}
+@media (max-width: 991px) {
+   .split-img-secc,
+   .split-img-secc--image-left,
+   .split-img-secc--image-right {
+      flex-direction: column;
+   }
+   .split-img-secc {
+      gap: 15px;
+   }
+   .split-img-secc__media,.split-img-secc__content{
+      max-width: 100%;
+   }
+   .bo__text br{
+      display:none;
+   }
+   .split-img-secc__heading {
+      font-size: 30px;
+   }
+}
+{% endstyle %}
+
+
+
+{% schema %}
+{
+  "name": "Custom Split Img Content",
+  "tag": "section",
+  "class": "split_img_cont_sec",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "image-right", "label": "Content left, Image right" },
+        { "value": "image-left",  "label": "Image left, Content right" }
+      ],
+      "default": "image-right"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "upper_heading",
+      "label": "Upper heading",
+      "placeholder": "e.g. About Us"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Story"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Add your section description here.</p>"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Split Img Content"
+    }
+  ]
+}
+{% endschema %} 
