@@ -1,4 +1,4 @@
-# Shopify CLI Theme - Horizon Custom Build
+# Shopify CLI Theme
 
 This repository contains a custom Shopify theme built using Shopify CLI. It is based on the Horizon/Dawn structure with custom modifications for performance, UI enhancements, and custom sections.
 
