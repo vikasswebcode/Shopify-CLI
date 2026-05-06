@@ -63,10 +63,13 @@
     width: 100%;
   }
 
+  .brand-slider .swiper-wrapper {
+    align-items: stretch;
+  }
+
   .brand-slider .swiper-slide {
+    height: auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .brand-slider__item {
@@ -76,6 +79,7 @@
     padding: 15px;
     background: #f0f0f0;
     width: 100%;
+    height: 100%;
   }
 
   .brand-slider__item img {
@@ -145,7 +149,7 @@
   {%- if section.blocks.size > 0 -%}
     <div class="brand-slider__swiper-wrap">
       <div class="swiper brand-swiper-{{ section.id }}">
-        <div class="swiper-wrapper" style="align-items:stretch;">
+        <div class="swiper-wrapper">
           {%- for block in section.blocks -%}
             {%- if block.settings.logo != blank -%}
               <div class="swiper-slide" {{ block.shopify_attributes }}>
