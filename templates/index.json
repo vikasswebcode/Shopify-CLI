@@ -9,81 +9,118 @@
  */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
+    "custom_mosaic_hero_F8cTeL": {
+      "type": "custom-mosaic-hero",
       "blocks": {
-        "heading": {
-          "type": "heading",
+        "slide_4tbbFr": {
+          "type": "slide",
           "settings": {
-            "heading": "Image banner",
-            "heading_size": "h0"
+            "slide_image": "shopify://shop_images/photorealistic-portrait-person-with-exotic-pineapple-fruit_1.jpg",
+            "overlay_color": "#1a3a3a",
+            "overlay_opacity": 50,
+            "text_color": "#ffffff",
+            "subheading": "The New Season Edit",
+            "heading": "The Art of Spring",
+            "heading_size": "h1",
+            "description": "<p>Embrace sage green tones and delicate pastels</p>",
+            "btn1_label": "Shop Now",
+            "btn1_link": "",
+            "btn1_secondary": false,
+            "btn1_custom_color": "",
+            "btn2_label": "",
+            "btn2_link": "",
+            "btn2_secondary": true
           }
         },
-        "text": {
-          "type": "text",
+        "slide_U7tw3K": {
+          "type": "slide",
           "settings": {
-            "text": "Give customers details about the banner image(s) or content on the template.",
-            "text_style": "body"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
+            "slide_image": "shopify://shop_images/portrait-beautiful-stylish-young-woman-street.jpg",
+            "overlay_color": "#1a3a3a",
+            "overlay_opacity": 50,
+            "text_color": "#ffffff",
+            "subheading": "The New Season Edit",
+            "heading": "The Art of Spring",
+            "heading_size": "h1",
+            "description": "<p>Embrace sage green tones and delicate pastels</p>",
+            "btn1_label": "Shop Art",
+            "btn1_link": "",
+            "btn1_secondary": false,
+            "btn1_custom_color": "",
+            "btn2_label": "",
+            "btn2_link": "",
+            "btn2_secondary": true
           }
         }
       },
       "block_order": [
-        "heading",
-        "text",
-        "button"
+        "slide_4tbbFr",
+        "slide_U7tw3K"
       ],
+      "name": "Mosaic Hero",
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "image_behavior": "none",
-        "desktop_content_position": "bottom-center",
-        "desktop_content_alignment": "center",
-        "show_text_box": false,
-        "color_scheme": "scheme-3",
-        "stack_images_on_mobile": false,
-        "mobile_content_alignment": "center",
-        "show_text_below": false
+        "section_height": 560,
+        "center_col_ratio": 3,
+        "side_col_ratio": 1,
+        "outer_gap": 8,
+        "inner_gap": 6,
+        "bg_color": "#f5f0eb",
+        "content_v_align": "center",
+        "content_h_align": "center",
+        "text_align": "center",
+        "autoplay": true,
+        "autoplay_speed": 5000,
+        "left_image_1": "shopify://shop_images/young-beautiful-woman-wearing-summer-style-sunglasses-yellow-isolated-wall-touching-mouth-with-hand-with-painful-expression-because-toothache.jpg",
+        "left_image_1_link": "",
+        "left_image_2": "shopify://shop_images/young-beautiful-woman-looking-trendy-girl-casual-summer-yellow-t-shirt-clothes-showing-her-tongue-round-sunglasses-positive-female-shows-facial-emotions-funny-model-isolated-blue.jpg",
+        "left_image_2_link": "",
+        "right_image_1": "shopify://shop_images/two-young-beautiful-smiling-blond-hipster-girls-trendy-summer-colorful-t-shirt-clothes.jpg",
+        "right_image_1_link": "",
+        "right_image_2": "shopify://shop_images/woman-swimwear-isolated-studio-background.jpg",
+        "right_image_2_link": "",
+        "side_hover_overlay": 20
       }
     },
-    "rich_text": {
-      "type": "rich-text",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Talk about your brand",
-            "heading_size": "h1"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text"
-      ],
+    "mold_inflammation_qVP6BH": {
+      "type": "mold-inflammation",
+      "name": "Mold Inflammation",
       "settings": {
-        "desktop_content_position": "center",
-        "content_alignment": "center",
-        "color_scheme": "scheme-1",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 0
+        "image_position": "left",
+        "subheading": "",
+        "heading_tag": "h2",
+        "heading": "<p>How Mold-Related Inflammation May Affect Brain Function</p>",
+        "text": "<p>Indoor mold produces mycotoxins and inflammatory molecules affecting neurological function. Damp building exposure increases cytokines, impacting mood and cognition.</p>",
+        "btn_label": "Test",
+        "btn_url": "#",
+        "btn_style": "solid",
+        "image": "shopify://shop_images/photorealistic-portrait-person-with-exotic-pineapple-fruit_1.jpg",
+        "bg_color": "#ffffff",
+        "heading_color": "#1a1a1a",
+        "text_color": "#444444",
+        "accent_color": "#1a6b6b",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
+    },
+    "mold_inflammation_neDKxG": {
+      "type": "mold-inflammation",
+      "name": "Mold Inflammation",
+      "settings": {
+        "image_position": "right",
+        "subheading": "",
+        "heading_tag": "h2",
+        "heading": "<p>How Mold-Related Inflammation May Affect Brain Function</p>",
+        "text": "<p>Indoor mold produces mycotoxins and inflammatory molecules affecting neurological function. Damp building exposure increases cytokines, impacting mood and cognition.</p>",
+        "btn_label": "Test",
+        "btn_url": "#",
+        "btn_style": "solid",
+        "image": "shopify://shop_images/photorealistic-portrait-person-with-exotic-pineapple-fruit_1.jpg",
+        "bg_color": "#ffffff",
+        "heading_color": "#1a1a1a",
+        "text_color": "#444444",
+        "accent_color": "#1a6b6b",
+        "padding_top": 0,
+        "padding_bottom": 52
       }
     },
     "featured_collection": {
@@ -114,118 +151,139 @@
         "padding_bottom": 36
       }
     },
-    "collage": {
-      "type": "collage",
+    "custom_symptoms_grid_zWnQwL": {
+      "type": "custom-symptoms-grid",
       "blocks": {
-        "collection-0": {
-          "type": "collection",
+        "symptom_qLkAgC": {
+          "type": "symptom",
           "settings": {
-            "collection": ""
+            "heading": "Chronic fatigue or low energy",
+            "description": "Feeling persistently drained despite adequate rest."
           }
         },
-        "product": {
-          "type": "product",
+        "symptom_JjJjwF": {
+          "type": "symptom",
           "settings": {
-            "product": "",
-            "second_image": false
+            "heading": "Brain fog / poor concentration",
+            "description": "Trouble focusing, memory lapses, or slowed thinking."
           }
         },
-        "collection-1": {
-          "type": "collection",
+        "symptom_9iGtYE": {
+          "type": "symptom",
           "settings": {
-            "collection": ""
+            "heading": "Sinus and respiratory issues",
+            "description": "Congestion, post-nasal drip, cough, or shortness of breath."
+          }
+        },
+        "symptom_7KEWHD": {
+          "type": "symptom",
+          "settings": {
+            "heading": "Headaches or migraines",
+            "description": "Frequent or pressure-type headaches."
+          }
+        },
+        "symptom_6XyKQR": {
+          "type": "symptom",
+          "settings": {
+            "heading": "Mood changes",
+            "description": "Anxiety, irritability, or low mood without a clear trigger."
+          }
+        },
+        "symptom_PWKDgi": {
+          "type": "symptom",
+          "settings": {
+            "heading": "Joint or muscle aches",
+            "description": "Unexplained body pain or stiffness."
+          }
+        },
+        "symptom_CXbzNP": {
+          "type": "symptom",
+          "settings": {
+            "heading": "Skin symptoms",
+            "description": "Rashes, itching, or heightened sensitivity."
+          }
+        },
+        "symptom_TpXicU": {
+          "type": "symptom",
+          "settings": {
+            "heading": "Digestive upset",
+            "description": "Bloating, nausea, abdominal discomfort, or changes in bowel habits."
+          }
+        },
+        "symptom_nFKCzq": {
+          "type": "symptom",
+          "settings": {
+            "heading": "Sleep disturbances",
+            "description": "Difficulty falling or staying asleep, unrefreshing sleep. Increased sensitivity to chemicals or odors — reacting strongly to perfumes, cleaners, or smoke."
           }
         }
       },
       "block_order": [
-        "collection-0",
-        "product",
-        "collection-1"
+        "symptom_qLkAgC",
+        "symptom_JjJjwF",
+        "symptom_9iGtYE",
+        "symptom_7KEWHD",
+        "symptom_6XyKQR",
+        "symptom_PWKDgi",
+        "symptom_CXbzNP",
+        "symptom_TpXicU",
+        "symptom_nFKCzq"
       ],
+      "name": "Symptoms Grid",
       "settings": {
-        "heading": "Multimedia collage",
-        "heading_size": "h2",
-        "desktop_layout": "left",
-        "mobile_layout": "collage",
-        "card_styles": "product-card-wrapper",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
+        "title": "Top 10 Symptoms\nof Mold\nExposure",
+        "bg_color": "#cddde4"
       }
     },
-    "video": {
-      "type": "video",
-      "settings": {
-        "heading": "",
-        "heading_size": "h1",
-        "enable_video_looping": false,
-        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
-        "description": "",
-        "full_width": false,
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "multicolumn": {
-      "type": "multicolumn",
-      "blocks": {
-        "column1": {
-          "type": "column",
-          "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column2": {
-          "type": "column",
-          "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column3": {
-          "type": "column",
-          "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column1",
-        "column2",
-        "column3"
-      ],
-      "settings": {
-        "title": "",
-        "heading_size": "h1",
-        "image_width": "third",
-        "image_ratio": "adapt",
-        "button_label": "",
-        "button_link": "",
-        "columns_desktop": 3,
-        "column_alignment": "center",
-        "background_style": "none",
-        "color_scheme": "scheme-1",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "custom_how_it_works_WHMnX8": {
+    "custom_how_it_works_jY6hcE": {
       "type": "custom-how-it-works",
+      "blocks": {
+        "step_cUCdkH": {
+          "type": "step",
+          "settings": {
+            "icon": "shopify://shop_images/photorealistic-portrait-person-with-exotic-pineapple-fruit_1.jpg",
+            "title": "Place your order online.",
+            "sub_text": ""
+          }
+        },
+        "step_nD6UiF": {
+          "type": "step",
+          "settings": {
+            "title": "Receive an email confirmation and your test kit by mail from our lab partner.",
+            "sub_text": ""
+          }
+        },
+        "step_VdtNeM": {
+          "type": "step",
+          "settings": {
+            "title": "Follow the kit instructions and return the sample using the enclosed prepaid shipping label.",
+            "sub_text": ""
+          }
+        },
+        "step_Jbt4Ez": {
+          "type": "step",
+          "settings": {
+            "title": "Get notified to schedule a 30-minute session",
+            "sub_text": "to review your results and explore practitioner-guided next steps."
+          }
+        }
+      },
+      "block_order": [
+        "step_cUCdkH",
+        "step_nD6UiF",
+        "step_VdtNeM",
+        "step_Jbt4Ez"
+      ],
       "name": "How It Works",
-      "settings": {}
+      "settings": {
+        "heading": "How it works",
+        "heading_size": "h1",
+        "bg_color": "#fefde8",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
     },
-    "custom_featured_collection_8mEwVh": {
+    "custom_featured_collection_ehFXGj": {
       "type": "custom-featured-collection",
       "name": "Custom Collection",
       "settings": {
@@ -244,13 +302,12 @@
     }
   },
   "order": [
-    "image_banner",
-    "rich_text",
+    "custom_mosaic_hero_F8cTeL",
+    "mold_inflammation_qVP6BH",
+    "mold_inflammation_neDKxG",
     "featured_collection",
-    "collage",
-    "video",
-    "multicolumn",
-    "custom_how_it_works_WHMnX8",
-    "custom_featured_collection_8mEwVh"
+    "custom_symptoms_grid_zWnQwL",
+    "custom_how_it_works_jY6hcE",
+    "custom_featured_collection_ehFXGj"
   ]
 }
