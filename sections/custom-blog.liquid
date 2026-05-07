@@ -1,0 +1,105 @@
+
+<section class="essential-upgrades-blog page-width {{ section.settings.class }}">
+  <div class="text-center mb-8" data-aos="fade-up">
+    <h2 class="font-bold text-3xl h1"  style="text-align:center;">{{ section.settings.section_title }}</h2>
+    {% if section.settings.section_subtitle != blank %}
+      <p class="text-base mt-2 text-opacity-80"  style="text-align:center;">{{ section.settings.section_subtitle }}</p>
+    {% endif %}
+  </div>
+
+  {% assign selected_blog = blogs[section.settings.blog] %}
+  {% if selected_blog and selected_blog.articles_count > 0 %}
+    <div class="blog-grid">
+      {% for article in selected_blog.articles limit: section.settings.posts_count %}
+        <article class="blog-card" data-aos="fade-up">
+          {% if article.image %}
+            <a href="{{ article.url }}" class="blog-image">
+              <img src="{{ article.image | img_url: '700x' }}" alt="{{ article.title | escape }}">
+            </a>
+          {% endif %}
+
+          <div class="blog-content">
+            <div class="blog-meta">
+              {% if article.metafields.custom.category %}
+                <span class="blog-category">{{ article.metafields.custom.category }}</span>
+              {% endif %}
+              {% if article.metafields.custom.read_time %}
+                <span class="blog-read-time">{{ article.metafields.custom.read_time }}</span>
+              {% endif %}
+            </div>
+
+            <a href="{{ article.url }}" class="blog-title">{{ article.title }}</a>
+
+
+
+                <p class="article-card__excerpt rte-width">
+                  {%- if article.excerpt.size > 0 -%}
+                    {{ article.excerpt | strip_html | truncatewords: 20 }}
+                  {%- else -%}
+                    {{ article.content | strip_html | truncatewords: 20 }}
+                  {%- endif -%}
+                </p>
+<a href="{{ article.url }}" class="blog-btn">Read More</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    {% comment %} <div class="vieew-all-btn" data-aos="fade-up">
+      <a href="{{ selected_blog.url }}" class="view-all-btn">{{ section.settings.view_all_text }}</a>
+    </div> {% endcomment %}
+
+  {% else %}
+    <p class="text-center text-gray-500">No articles found.</p>
+  {% endif %}
+</section>
+{% schema %}
+{
+  "name": "Custom Blog SEC",
+  "settings": [
+    {
+    "type": "text",
+    "id":"class",
+    "label": "Add Class"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Essential Upgrades Blog"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "Upgrade your ride with the best parts and expert tips."
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Select Blog"
+    },
+    {
+      "type": "range",
+      "id": "posts_count",
+      "label": "Number of posts to show",
+      "default": 6,
+      "min": 1,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View All Button Text",
+      "default": "View All Articles"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Blog SEC",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
