@@ -299,6 +299,94 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "custom_brand_slider_cdLYCY": {
+      "type": "custom-brand-slider",
+      "blocks": {
+        "brand_FCR3Ux": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/young-beautiful-woman-looking-trendy-girl-casual-summer-yellow-t-shirt-clothes-showing-her-tongue-round-sunglasses-positive-female-shows-facial-emotions-funny-model-isolated-blue.jpg",
+            "link": ""
+          }
+        },
+        "brand_dwxh3H": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/young-beautiful-woman-wearing-summer-style-sunglasses-yellow-isolated-wall-touching-mouth-with-hand-with-painful-expression-because-toothache.jpg",
+            "link": ""
+          }
+        },
+        "brand_hmGK4L": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/young-beautiful-woman-looking-trendy-girl-casual-summer-yellow-t-shirt-clothes-showing-her-tongue-round-sunglasses-positive-female-shows-facial-emotions-funny-model-isolated-blue.jpg",
+            "link": ""
+          }
+        },
+        "brand_jDH6VQ": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/woman-swimwear-isolated-studio-background.jpg",
+            "link": ""
+          }
+        },
+        "brand_wkAPAj": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/two-young-beautiful-smiling-blond-hipster-girls-trendy-summer-colorful-t-shirt-clothes.jpg",
+            "link": ""
+          }
+        },
+        "brand_zm6kLt": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/woman-swimwear-isolated-studio-background.jpg",
+            "link": ""
+          }
+        },
+        "brand_dxEDYR": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/young-beautiful-woman-wearing-summer-style-sunglasses-yellow-isolated-wall-touching-mouth-with-hand-with-painful-expression-because-toothache.jpg",
+            "link": ""
+          }
+        },
+        "brand_j9qniw": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/woman-swimwear-isolated-studio-background.jpg",
+            "link": ""
+          }
+        },
+        "brand_cgfqep": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/two-young-beautiful-smiling-blond-hipster-girls-trendy-summer-colorful-t-shirt-clothes.jpg",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "brand_FCR3Ux",
+        "brand_dwxh3H",
+        "brand_hmGK4L",
+        "brand_jDH6VQ",
+        "brand_wkAPAj",
+        "brand_zm6kLt",
+        "brand_dxEDYR",
+        "brand_j9qniw",
+        "brand_cgfqep"
+      ],
+      "name": "Brand Slider",
+      "settings": {
+        "heading": "Our Brands",
+        "description": "sdsdsdsdsds",
+        "btn_label": "View All",
+        "btn_link": "",
+        "slides_per_view": 7,
+        "autoplay_speed": "2500"
+      }
     }
   },
   "order": [
@@ -308,6 +396,7 @@
     "featured_collection",
     "custom_symptoms_grid_zWnQwL",
     "custom_how_it_works_jY6hcE",
-    "custom_featured_collection_ehFXGj"
+    "custom_featured_collection_ehFXGj",
+    "custom_brand_slider_cdLYCY"
   ]
 }
