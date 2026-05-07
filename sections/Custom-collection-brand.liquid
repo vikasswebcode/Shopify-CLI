@@ -1,0 +1,569 @@
+<div class="shop-brand-colecs">
+  <div class="shop-brand-section">
+    <div class="page-width">
+      <h2 class="shop-title">{{ section.settings.heading }}</h2>
+      <div class="swiper shopSwiper">
+        <div class="swiper-wrapper">
+          {% assign product_list = section.settings.collection.products | limit: section.settings.products_limit %}
+          {% for product in product_list %}
+            {% if product != blank %}
+              <div class="swiper-slide">
+                <div class="product-card">
+                  {% assign has_color = false %}
+                  {% for option in product.options_with_values %}
+                    {% assign option_name = option.name | downcase %}
+                    {% if option_name == 'color' %}
+                      {% assign has_color = true %}
+                    {% endif %}
+                  {% endfor %}
+
+                  <div class="product-image">
+                    <a href="{{ product.url }}">
+                      <img
+                        src="
+                          {% if has_color and product.selected_or_first_available_variant.featured_image %}
+                              {{ product.selected_or_first_available_variant.featured_image | image_url: width: 600 }}
+                          {% else %}
+                              {{ product.featured_image | image_url: width: 600 }}
+                          {% endif %}
+                        "
+                        class="main-product-image"
+                        width=""
+                        height=""
+                      >
+                    </a>
+                  </div>
+                  <div class="product-info">
+                    <h3>{{ product.title | truncate: 24 }}</h3>
+                    <p class="price">{{ product.price | money }}</p>
+                    {% assign has_color = false %}
+                    {% for option in product.options_with_values %}
+                      {% assign option_name = option.name | downcase %}
+                      {% if option_name == 'color' %}
+                        {% assign has_color = true %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if has_color %}
+                      <div class="which-color">
+                        <span> Color - </span>
+                        <span class="this-color-here">
+                          {{ product.selected_or_first_available_variant.option1 }}
+                        </span>
+                      </div>
+                    {% endif %}
+                    {% for option in product.options_with_values %}
+                      {% if option.name == 'Color' %}
+                        <div class="swatches">
+                          {% for value in option.values %}
+                            {% assign variant = product.variants | where: 'option1', value | first %}
+                            {% if variant.featured_image %}
+                              {% assign color = value | downcase %}
+                              {% assign bg = color %}
+                              {% comment %}
+                                <span
+                                  class="swatch"
+                                  style="background-color: {{ bg }};"
+                                  data-image="{{ variant.featured_image | image_url: width: 600 }}"
+                                  data-color="{{ value }}"
+                                ></span>
+                              {% endcomment %}
+                              <span
+                                class="swatch"
+                                style="background-color: {{ bg }};"
+                                data-image="{{ variant.featured_image | image_url: width: 600 }}"
+                                data-color="{{ value }}"
+                                data-variant-id="{{ variant.id }}"
+                              ></span>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                    {% assign has_color = false %}
+                    {% for option in product.options_with_values %}
+                      {% if option.name == 'Color' %}
+                        {% assign has_color = true %}
+                      {% endif %}
+                    {% endfor %}
+                    {% comment %}
+                      {% if has_color %}
+                      {% elsif product.has_only_default_variant %}
+                        <button class="btn add-to-cart" data-variant-id="{{ product.variants.first.id }}">
+                          Add To Cart
+                        </button>
+                      {% else %}
+                        <a href="{{ product.url }}" class="btn choose-option">
+                          Choose Options
+                        </a>
+                      {% endif %}
+                    {% endcomment %}
+                    {% if has_color %}
+                    {% elsif product.has_only_default_variant %}
+                      {% if product.available %}
+                        <button class="btn add-to-cart" data-variant-id="{{ product.variants.first.id }}">
+                          Add To Cart
+                        </button>
+                      {% else %}
+                        <a class="btn sold-out disabled" tabindex="-1" aria-disabled="true">
+  Sold Out
+</a>
+                      {% endif %}
+
+                    {% else %}
+                      {% if product.available %}
+                        <a href="{{ product.url }}" class="btn choose-option"> Choose Options </a>
+                      {% else %}
+                        <a class="btn sold-out disabled" tabindex="-1" aria-disabled="true">
+  Sold Out
+</a>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .btn.sold-out,
+.btn.disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  pointer-events: none; 
+  opacity: 0.7;
+}
+  .shop-brand-colecs {
+    max-width: 1760px;
+    padding: 0 20px;
+    margin: 0 auto;
+  }
+  .shop-brand-section {
+    background: #bba887;
+    padding: 80px 43px;
+    border-radius: 50px;
+  }
+  .shop-brand-section .page-width {
+    max-width: 1440px;
+    padding: 0;
+  }
+  .shop-brand-section .shop-title {
+    margin: 0 0 40px;
+    font-size: 32px;
+    line-height: 60px;
+    font-weight: 600;
+    text-align: center;
+    color: #fff;
+  }
+  .shop-brand-section .product-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    min-height:436px;
+  }
+  .shop-brand-section .product-info {
+    background-color: #fff;
+    padding: 4px 20px 12px;
+    box-sizing: border-box;
+    line-height: 24px;
+  }
+  .shop-brand-section .product-image {
+    text-align: center;
+    background:#faf7eb;
+  }
+  .shop-brand-section .product-image img {
+    max-width: 100%;
+    object-fit: contain;
+    height: 100%;
+    aspect-ratio: 1.16945;
+    display: block;
+    margin: 0 auto;
+  }
+  .shop-brand-section .product-info h3{
+    color: #1f2937;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    letter-spacing: normal;
+    margin:0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+  }
+  .shop-brand-section .price {
+    margin: 0 !important;
+    color: #bba887;
+    letter-spacing: normal;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 16px;
+  }
+  .shop-brand-section .swatches {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 3px;
+    align-items:center;
+  }
+  .which-color {
+    color: #000;
+    font-weight: 600;
+    line-height: 24px;
+    font-size: 16px;
+    margin: 6px 0 0;
+    letter-spacing: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+  }
+
+  .this-color-here {
+    color: #4b5563;
+  }
+  .shop-brand-section .swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px, rgb(156, 163, 175) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+  }
+  .shop-brand-section .swatch.active {
+    border: 3px solid rgb(192, 168, 127);
+    box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px, rgb(156, 163, 175) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+    width: 36px;
+    height: 36px
+  }
+  .shop-brand-section .btn {
+    width: 100%;
+    background: #faf7eb;
+    cursor: pointer;
+    padding: 8px 24px 8px;
+    min-width: 100%;
+    box-sizing: border-box;
+    font-size: 18px;
+    margin-top: 14px;
+    margin-bottom: 10px;
+    letter-spacing: -.45px;
+    line-height: 27px;
+    border: 2px solid rgb(187, 168, 135);
+    border-radius: 20px;
+    transition-property: transform;
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bba887;
+  }
+  .shop-brand-section .btn:hover {
+    background: #bba887;
+    color: #fff;
+    transform: scale(1.05);
+
+  }
+  .shop-brand-section .swiper-pagination {
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .shop-brand-section .swiper-pagination-bullet {
+    background: #000;
+    opacity: 0.2;
+  }
+
+  .shop-brand-section .swiper-pagination-bullet-active {
+    opacity: 1;
+    background: #fff;
+  }
+
+  @media(max-width:1535px){
+    {% comment %} .shop-brand-section .swiper-wrapper .swiper-slide {
+      max-width: 300px;
+    } {% endcomment %}
+    .shop-brand-section .product-card{
+      min-height: inherit;
+    }
+    .shop-brand-section .product-image img {
+      aspect-ratio: 1.19516;
+    }
+  }
+  @media(max-width:1279px){
+    .shop-brand-section {
+      padding: 16px 20px 40px;
+      border-radius: 50px;
+    }
+    .shop-brand-section .shop-title {
+      margin: 0 0 20px;
+    }
+    .shop-brand-section .swiper-wrapper {
+
+    }
+  }
+  @media(max-width:1023px){
+    .shop-brand-section .product-info h3 {
+      font-size: 18px;
+      line-height: 28px;
+    }
+    .shop-brand-section .btn{
+      font-size: 18px;
+    }
+    .shop-brand-section {
+      padding: 16px 8px 40px;
+      border-radius: 9px;
+    }
+  }
+  @media(max-width:767px){
+    .shop-brand-section .btn{
+      font-size: 16px;
+    }
+    .shop-brand-colecs {
+      padding: 40px 20px 0;
+    }
+  }
+  @media(max-width:639px){
+    .shop-brand-section .btn{
+      font-size: 14px;
+      line-height: 20px;
+    }
+    .shop-brand-section .price {
+      font-size: 12px;
+      line-height: 16px;
+    }
+    .which-color {
+      line-height: 16px;
+      font-size: 14px;
+      margin: 4px 0 0;
+    }
+    .shop-brand-section .product-info {
+      padding: 4px 8px 12px;
+    }
+    .shop-brand-section .btn {
+      font-size: 12px;
+      line-height: 18px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+    .shop-brand-section {
+      padding: 16px 8px 40px;
+    }
+    .shop-brand-section .product-card {
+      border-radius: 8px;
+    }
+    .shop-brand-section .product-info h3 {
+      font-size: 14px;
+      line-height: 20px;
+    }
+    .shop-brand-section .swatch {
+      width: 16px;
+      height: 16px;
+    }
+    .shop-brand-section .swatches {
+      align-items: center;
+    }
+    .shop-brand-section .swatch.active {
+      width: 22px;
+      height: 22px;
+    }
+    .shop-brand-section .shop-title {
+      font-size: 24px;
+      line-height: 48px;
+    }
+
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof Swiper !== 'undefined') {
+      new Swiper('.shopSwiper', {
+        slidesPerView: 4,
+        spaceBetween: 12,
+        loop: false,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        },
+        breakpoints: {
+          320: { slidesPerView: 2,spaceBetween: 3, },
+          768: { slidesPerView: 2.5, spaceBetween: 20, },
+          1024: { slidesPerView: 3.3, spaceBetween: 20, },
+          1280: { slidesPerView: 3.5,  spaceBetween: 15, },
+          1439: { slidesPerView: 4,  spaceBetween: 20, }
+        }
+      });
+    }
+    document.querySelectorAll('.shop-brand-section .product-card').forEach(card => {
+      const firstSwatch = card.querySelector('.swatch');
+      if (!firstSwatch) return;
+
+      const newImage = firstSwatch.dataset.image;
+      const newColor = firstSwatch.dataset.color;
+      const variantId = firstSwatch.dataset.variantId;
+
+      firstSwatch.classList.add('active');
+
+      if (newImage) {
+        const img = card.querySelector('.main-product-image');
+        if (img) img.src = newImage;
+      }
+
+      if (newColor) {
+        const colorText = card.querySelector('.this-color-here');
+        if (colorText) colorText.innerText = newColor;
+      }
+
+      const button = card.querySelector('.add-to-cart');
+      if (button && variantId) {
+        button.setAttribute('data-variant-id', variantId);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const swatch = e.target.closest('.swatch');
+      if (!swatch) return;
+
+      const card = swatch.closest('.product-card');
+      if (!card) return;
+
+      const newImage = swatch.dataset.image;
+      const newColor = swatch.dataset.color;
+      const variantId = swatch.dataset.variantId;
+
+      if (newImage) {
+        const img = card.querySelector('.main-product-image');
+        if (img) img.src = newImage;
+      }
+
+      if (newColor) {
+        const colorText = card.querySelector('.this-color-here');
+        if (colorText) colorText.innerText = newColor;
+      }
+
+      card.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+
+      const button = card.querySelector('.add-to-cart');
+      if (button && variantId) {
+        button.setAttribute('data-variant-id', variantId);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const button = e.target.closest('.add-to-cart');
+      if (!button) return;
+
+      e.preventDefault();
+
+      const variantId = button.dataset.variantId;
+      if (!variantId) return;
+
+      {% comment %} button.disabled = true;
+      button.innerText = 'Adding...'; {% endcomment %}
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: variantId,
+          quantity: 1
+        })
+      })
+      .then(res => res.json())
+      .then(() => {
+         return fetch('/?sections=cart-drawer,header')
+      })
+      .then(res => res.json())
+      .then(data => {
+
+        const drawerHTML = new DOMParser().parseFromString(data['cart-drawer'], 'text/html');
+        const newDrawer = drawerHTML.querySelector('cart-drawer');
+        const currentDrawer = document.querySelector('cart-drawer');
+
+        if (newDrawer && currentDrawer) {
+          currentDrawer.innerHTML = newDrawer.innerHTML;
+          currentDrawer.classList.remove('is-empty');
+        }
+
+  const headerHTML = new DOMParser().parseFromString(data['header'], 'text/html');
+
+  const newBubble = headerHTML.querySelector('#cart-icon-bubble');
+  const currentBubble = document.querySelector('#cart-icon-bubble');
+
+  if (newBubble && currentBubble) {
+    currentBubble.innerHTML = newBubble.innerHTML;
+  }
+
+
+      if (typeof currentDrawer.open === 'function') {
+          currentDrawer.open();
+        } else {
+          currentDrawer.classList.add('active');
+        }
+      })
+      .catch(err => console.error('Cart Error:', err))
+      .finally(() => {
+        button.disabled = false;
+        button.innerText = 'Add To Cart';
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      const overlay = e.target.closest('#CartDrawer-Overlay');
+      if (!overlay) return;
+
+      const drawer = document.querySelector('cart-drawer');
+
+      if (drawer && typeof drawer.close === 'function') {
+        drawer.close();
+      } else if (drawer) {
+        drawer.classList.remove('active');
+      }
+    });
+
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Collections Brand",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Shop Our Brand",
+      "label": "Heading"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "label": "Products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Collections Brand",
+      "category": "Custom",
+    }
+  ]
+}
+{% endschema %}
