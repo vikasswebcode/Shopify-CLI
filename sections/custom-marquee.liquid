@@ -1,0 +1,140 @@
+<style>
+.marquee {
+  overflow: hidden;
+  padding: 0px 10px;
+  position: relative;
+}
+
+.marquee .column {
+  display: flex;
+  align-items: center;
+  gap: 81px;    
+  width: max-content;
+  flex-shrink: 0;
+  animation: marquee-left 39s linear infinite;
+  will-change: transform;
+}
+
+.marquee .column.reverse {
+  animation-direction: reverse;
+}
+
+.marquee .marquee-item {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marquee .marquee-item img {
+  display: block;
+    width: 100%;
+  object-fit: contain;
+}
+
+.marquee:hover .column {
+  animation-play-state: paused;
+}
+ .tessas-offer.product-scrooling {
+    margin: 100px 0;
+} 
+@media screen and (max-width: 989px) {
+    {% comment %} .tessas-offer.product-scrooling {
+    margin: 72px 0 110px;
+} {% endcomment %}
+.marquee {
+    padding: 15.61px 0;
+}
+.marquee .column {
+    gap: 46px;
+}
+.marquee-item img {
+    width: 100px !important;
+    height: 42px !important;
+    object-fit: contain !important;
+}
+}
+@keyframes marquee-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* only half, because we duplicate content */
+}
+</style>
+
+<div class="tessas-offer {{ section.settings.class }} desktop-none">
+  <div class="tessas-offer-container">
+    <div class="tessas-offer-wrapper">
+      <div class="marquee">
+         <h2 class="font-bold text-2xl h1" data-aos="fade-up">{{ section.settings.section_title }}</h2>
+        <div class="column column-1">
+          {% for block in section.blocks %}
+            {% if block.type == 'col1_image' %}
+              <div class="marquee-item {{ block.settings.class-img }}">
+                <img src="{{ block.settings.image | image_url: width: 600 }}" alt="Instagram image" loading="lazy">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.marquee .column').forEach(column => {
+    if (column.dataset.duplicated === "true") return;
+
+    const items = Array.from(column.children);
+    // Duplicate content 2 more times = total 3 sets (covers long gaps)
+    for (let i = 0; i < 2; i++) {
+      items.forEach(item => column.appendChild(item.cloneNode(true)));
+    }
+
+    column.dataset.duplicated = "true";
+  });
+});
+</script>
+
+
+
+{% schema %}
+{
+  "name": "Custom Marquee SEC",
+  "settings": [
+    {
+    "type": "text",
+    "id":"class",
+    "label": "Add Class"
+    },
+    {
+    "type": "inline_richtext",
+    "id":"section_title",
+    "label": "Add Section Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "col1_image",
+      "name": "Column 1 Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Upload image"
+        },
+        {
+        "type": "text",
+        "id": "class-img",
+        "label": "Add Class"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Marquee SEC",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
