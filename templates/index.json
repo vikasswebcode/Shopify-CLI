@@ -384,8 +384,58 @@
         "description": "sdsdsdsdsds",
         "btn_label": "View All",
         "btn_link": "",
-        "slides_per_view": 7,
         "autoplay_speed": "2500"
+      }
+    },
+    "custom_hero_banner_pda4iM": {
+      "type": "custom-hero-banner",
+      "blocks": {
+        "subheading_QfKLgY": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "New Collection"
+          }
+        },
+        "heading_NdLnpA": {
+          "type": "heading",
+          "settings": {
+            "heading": "Welcome to Our Store",
+            "heading_size": "h1"
+          }
+        },
+        "text_VfNd9t": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Discover our latest arrivals and exclusive deals.</p>"
+          }
+        },
+        "buttons_XrzNMB": {
+          "type": "buttons",
+          "settings": {
+            "btn1_label": "Shop Now",
+            "btn1_link": "",
+            "btn1_secondary": false,
+            "btn2_label": "Learn More",
+            "btn2_link": "",
+            "btn2_secondary": true
+          }
+        }
+      },
+      "block_order": [
+        "subheading_QfKLgY",
+        "heading_NdLnpA",
+        "text_VfNd9t",
+        "buttons_XrzNMB"
+      ],
+      "name": "Hero Banner",
+      "settings": {
+        "background_type": "image",
+        "show_mute_button": true,
+        "overlay_opacity": 40,
+        "section_height": "large",
+        "content_vertical": "middle",
+        "content_alignment": "center",
+        "color_scheme": "scheme-3"
       }
     }
   },
@@ -397,6 +447,7 @@
     "custom_symptoms_grid_zWnQwL",
     "custom_how_it_works_jY6hcE",
     "custom_featured_collection_ehFXGj",
-    "custom_brand_slider_cdLYCY"
+    "custom_brand_slider_cdLYCY",
+    "custom_hero_banner_pda4iM"
   ]
 }
